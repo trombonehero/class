@@ -52,3 +52,16 @@ optional arguments:
                         username/password file (YAML format)
   --term TERM           e.g., Fall 2016: 201601 [default: 201502]
 ```
+
+It is helpful to create a file called `credentials.yaml` with your
+username and password:
+
+```sh
+$ touch credentials.yaml
+$ chmod 600 credentials.yaml
+$ echo << EOF > credentials
+username: your_user_name
+password: your_password
+EOF
+$ chmod 400 credentials.yaml
+```
