@@ -28,6 +28,16 @@ class Student(Model):
     class Meta:
         database = db
 
+    def email(self):
+        return '%s@mun.ca' % self.username
+
+    def group(self):
+        groups = self.groups.order_by(GroupMembership.id)
+        if len(groups) == 0:
+            return -1
+        else:
+            return groups[0].group.number
+
     def name(self):
         return '%s %s' % (self.forename, self.surname)
 
