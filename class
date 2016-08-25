@@ -19,6 +19,12 @@ banner.setup_argparse(
 parse = subparsers.add_parser('parse', help = 'parse Banner class list')
 parse.add_argument('file', nargs = '+', help = 'file containing class list')
 
+l = subparsers.add_parser('list', help = 'list students in the course')
+
+sort_keys = importlib.import_module('list').sort_keys
+l.add_argument('--sort-by', default = sort_keys[0],
+        help = 'how to sort students (%s)' % ' | '.join(sort_keys))
+
 args = args.parse_args()
 
 # Set database URL and open the connection:
