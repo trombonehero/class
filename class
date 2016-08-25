@@ -4,6 +4,7 @@ import argparse
 import banner
 import config
 import importlib
+import parse
 
 
 args = argparse.ArgumentParser()
@@ -16,8 +17,8 @@ init = subparsers.add_parser('init', help = 'initialize class database')
 banner.setup_argparse(
         subparsers.add_parser('banner', help = 'interact directly with Banner'))
 
-parse = subparsers.add_parser('parse', help = 'parse Banner class list')
-parse.add_argument('file', nargs = '+', help = 'file containing class list')
+parsesub = subparsers.add_parser('parse', help = 'parse Banner HTML')
+parse.setup_argparse(parsesub)
 
 l = subparsers.add_parser('list', help = 'list students in the course')
 
