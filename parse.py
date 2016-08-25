@@ -22,7 +22,7 @@ def run(args, db):
     print('')
 
     (new, existing) = save_students(student_details)
-    print('%d new students, %d existing' % (new, existings))
+    print('%d new students, %d existing' % (new, existing))
 
 
 def save_students(students):
