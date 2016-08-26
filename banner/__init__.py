@@ -23,8 +23,8 @@ def setup_argparse(parser):
     crn.add_argument('subject', help = 'academic subject (e.g., ENGI)')
     crn.add_argument('course_number', help = 'course number (e.g., 3891)')
 
-    fetch = subparsers.add_parser('fetch', help = 'fetch class list for CRN')
-    fetch.add_argument('crn', help = 'Course Registration Number')
+    classlist = subparsers.add_parser('classlist', help = 'fetch class list')
+    classlist.add_argument('crn', help = 'Course Registration Number')
 
 
 class urlmapper:

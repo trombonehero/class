@@ -1,6 +1,6 @@
 import humanize
 import inflect
-import parse
+import parse.classlist
 import requests
 import sys
 
@@ -21,14 +21,14 @@ def run(args, browser, db, urls):
         result = browser.get(urls.map(class_list))
         if not result.ok: raise ValueError, result
 
-        (course_info, students) = parse.parse(result.soup)
+        (course_info, students) = parse.classlist.parse(result.soup)
 
         print(course_info['name'])
         print(course_info['duration'])
         print('%d students' % len(students))
         print('')
 
-        (new, existing) = parse.save_students(students)
+        (new, existing) = parse.classlist.save_students(students)
         print('%d new students, %d existing' % (new, existing))
 
 
