@@ -52,15 +52,16 @@ class lists and save the resulting student data into the local database
 (`banner fetch`).
 
 ```
-$ class banner -h
+$ ./class banner -h
 usage: class banner [-h] [--banner-root BANNER_ROOT] [--ca-bundle CA_BUNDLE]
                     [--credential-file CREDENTIAL_FILE] [--term TERM]
-                    {crn,fetch} ...
+                    {crn,classlist,transcript} ...
 
 positional arguments:
-  {crn,fetch}
+  {crn,classlist,transcript}
     crn                 find course CRN from Banner
-    fetch               fetch class list for CRN
+    classlist           fetch class list
+    transcript          fetch transcript
 
 optional arguments:
   -h, --help            show this help message and exit
