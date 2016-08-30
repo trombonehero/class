@@ -15,7 +15,7 @@ def print_courses(courses):
     marks = collections.defaultdict(list)
     grades = collections.defaultdict(int)
 
-    for (subject, course, title, mark) in courses:
+    for ((year, term), subject, course, title, mark) in courses:
         print('%4s %4s  %-32s %s' % (subject, course, title, mark))
 
         try:
