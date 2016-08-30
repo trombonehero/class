@@ -113,6 +113,7 @@ def parse(soup):
                     )
 
                     course = (
+                        term,
                         detail['Subject'],
                         detail['Course'].strip(),
                         detail['Title'].strip(),
