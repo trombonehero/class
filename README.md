@@ -26,18 +26,18 @@ $ ./class --help
 The command-line `class` tool uses a subcommand style of interaction:
 
 ```
-$ class -h
-usage: class [-h] [--db DB] {init,banner,parse} ...
+usage: class [-h] [--db DB] {init,banner,parse,list} ...
 
 positional arguments:
-  {init,banner,parse}
-    init               initialize class database
-    banner             interact directly with Banner
-    parse              parse Banner class list
+  {init,banner,parse,list}
+    init                initialize class database
+    banner              interact directly with Banner
+    parse               parse Banner HTML
+    list                list students in the course
 
 optional arguments:
-  -h, --help           show this help message and exit
-  --db DB              database URL
+  -h, --help            show this help message and exit
+  --db DB               database URL
 ```
 
 ### Banner subcommands
