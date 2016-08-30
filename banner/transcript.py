@@ -15,8 +15,10 @@ def run(args, browser, db, urls):
         sys.stderr.write('Error: need exactly one of --all or student_id\n')
         sys.exit(1)
 
+    term = args.term
+
     if args.id:
-        (name, courses) = fetch_transcript(browser, urls, args.term, args.id)
+        (name, courses) = fetch_transcript(browser, urls, term, args.id)
 
         print('Retrieved transcript for %s' % name)
         print('')
@@ -33,8 +35,21 @@ def run(args, browser, db, urls):
 
 
     else:
-        sys.stderr.write('Multi-transcript retrieval not yet supported\n')
-        sys.exit(1)
+        students = (
+            db.Student.select()
+                      .join(db.TranscriptEntry, peewee.JOIN.LEFT_OUTER)
+                      .where(db.TranscriptEntry.student == None)
+        )
+
+        print('Retrieving %d transcripts:' % students.count())
+
+        for s in students:
+            sys.stdout.write('%9s %-30s  ' % (s.student_id, s.name()))
+
+            (_, courses) = fetch_transcript(browser, urls, term, s.student_id)
+            save(db, s, courses)
+
+            sys.stdout.write('%3d courses\n' % len(courses))
 
 
 def fetch_transcript(browser, urls, term, student_id):
