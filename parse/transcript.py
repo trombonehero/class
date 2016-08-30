@@ -5,7 +5,7 @@ import collections
 def run(args, db):
     soup = BeautifulSoup(open(args.file, 'r'), "html.parser")
     (name, courses) = parse(soup)
-    marks = []
+    marks = collections.defaultdict(list)
     grades = collections.defaultdict(int)
 
     print('Parsed transcript for %s:' % name)
@@ -17,7 +17,9 @@ def run(args, db):
         try:
             mark = float(mark)
 
-            marks.append(mark)
+            marks[subject].append(mark)
+            marks['*'].append(mark)
+
             grades[grade(mark)] += 1
 
 
@@ -25,9 +27,22 @@ def run(args, db):
             pass
 
     print('')
-    print('Overall average of numeric marks: %s' % (sum(marks) / len(marks)))
     for g in 'ABCDF':
         print('  %c   %2d  %s' % (g, grades[g], '*' * grades[g]))
+
+    print('')
+    print('  Subj   N   Min   Avg   Max')
+    print('  ----  --   ---  -----  ---')
+    for subject in sorted(marks.keys(), key = lambda k: len(marks[k]),
+                          reverse = True):
+
+        sub_marks = marks[subject]
+        print('  %4s  %2d   %2d%%  %0.1f%%  %2d%%' % (
+            subject, len(sub_marks),
+            min(sub_marks),
+            sum(sub_marks) / float(len(sub_marks)),
+            max(sub_marks),
+        ))
 
 
 def grade(mark):
