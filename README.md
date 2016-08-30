@@ -5,6 +5,22 @@ This is a tool for interacting with Banner, the registration system used by
 It suffers so that you don't have to.
 
 
+## Installation
+
+The simplest way to use `class` is to run it directly from a source checkout.
+After installing a few Python dependencies:
+
+```sh
+$ pip install humanize inflect mechanicalsoup
+```
+
+clone this repository and test that you can run the `class` command:
+
+```sh
+$ ./class --help
+```
+
+
 ## Usage
 
 The command-line `class` tool uses a subcommand style of interaction:
