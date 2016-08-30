@@ -8,6 +8,7 @@ def run(args, db):
 
     print('Parsed transcript for %s:' % name)
     print('')
+    print_courses(courses)
 
 
 def print_courses(courses):
