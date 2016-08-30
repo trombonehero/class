@@ -22,11 +22,14 @@ def run(args, db):
     print('')
 
     (new, existing) = save_students(student_details)
-    print('%d new students, %d existing' % (new, existing))
+    print('%d existing students, %d new:' % (len(existing), len(new)))
+
+    for s in new:
+        print('%12s %9s %-24s' % (s.username, s.student_id, s.name()))
 
 
 def save_students(students):
-    new = 0
+    (new_students, existing_students) = ([], [])
 
     for sd in students:
         username = sd['email'].split('@')[0]
@@ -49,9 +52,9 @@ def save_students(students):
         # to force the use of INSERT on our first call to save()
         s.save(force_insert = new_student)
 
-        new += new_student
+        (new_students if new_student else existing_students).append(s)
 
-    return (new, len(students) - new)
+    return (new_students, existing_students)
 
 
 def parse(soup):
