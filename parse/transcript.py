@@ -5,11 +5,14 @@ import collections
 def run(args, db):
     soup = BeautifulSoup(open(args.file, 'r'), "html.parser")
     (name, courses) = parse(soup)
-    marks = collections.defaultdict(list)
-    grades = collections.defaultdict(int)
 
     print('Parsed transcript for %s:' % name)
     print('')
+
+
+def print_courses(courses):
+    marks = collections.defaultdict(list)
+    grades = collections.defaultdict(int)
 
     for (subject, course, title, mark) in courses:
         print('%4s %4s  %-32s %s' % (subject, course, title, mark))
