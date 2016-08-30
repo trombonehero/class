@@ -40,6 +40,10 @@ optional arguments:
   --db DB               database URL
 ```
 
+You will want to start with `class init` in order to create an empty class
+database file, followed by some Banner comands.
+
+
 ### Banner subcommands
 
 The `banner` subcommand directly interacts with the online Banner system.
