@@ -1,4 +1,4 @@
-import banner.fetch
+import banner.classlist
 import humanize
 import inflect
 import requests
@@ -13,7 +13,7 @@ def run(args, browser, db, urls):
     courses = []
 
     try:
-        result = browser.get(urls.map(banner.fetch.class_list))
+        result = browser.get(urls.map(banner.classlist.class_list))
         if not result.ok: raise ValueError, result
         soup = result.soup
 
