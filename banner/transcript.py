@@ -1,4 +1,5 @@
 import parse.transcript
+import peewee
 import requests
 import sys
 
@@ -20,6 +21,16 @@ def run(args, browser, db, urls):
         print('Retrieved transcript for %s' % name)
         print('')
         parse.transcript.print_courses(courses)
+
+        try:
+            student = db.Student.get(student_id = args.id)
+            save(db, student, courses)
+
+        except peewee.DoesNotExist:
+            sys.stderr.write('\n%s (%s) not a student in this database\n' % (
+                name, args.id))
+            sys.exit(1)
+
 
     else:
         sys.stderr.write('Multi-transcript retrieval not yet supported\n')
@@ -65,3 +76,19 @@ def fetch_transcript(browser, urls, term, student_id):
         sys.stderr.write('Error: %s\n' % e)
         sys.exit(1)
 
+
+def save(db, student, courses):
+    assert student is not None
+
+    for course in courses:
+        ((year, term), subject, code, title, grade) = course
+
+        e, created = db.TranscriptEntry.get_or_create(
+                student = student, year = year, term = term,
+                subject = subject, code = code,
+                defaults = { 'result': grade })
+
+        try: e.mark = int(grade)
+        except ValueError: pass
+
+        e.save()
