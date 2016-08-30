@@ -107,6 +107,10 @@ def parse(soup):
 
             else:
                 columns = row.findAll('td')
+
+                if headers is None:
+                    break
+
                 if len(columns) == len(headers) + 1:        # don't ask.
                     detail = dict(
                         zip(headers, [ c.text for c in row.findAll('td') ])
