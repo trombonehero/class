@@ -71,6 +71,19 @@ class GroupMembership(Model):
         database = db
 
 
+class TranscriptEntry(Model):
+    student = ForeignKeyField(Student, related_name = 'courses')
+    year = IntegerField()
+    term = IntegerField()
+    subject = FixedCharField(4)
+    code = FixedCharField(4)
+    result = FixedCharField(4)
+    mark = IntegerField(null = True)
+
+    class Meta:
+        database = db
+
+
 def close():
     db.close()
 
@@ -78,4 +91,4 @@ def connect():
     db.connect()
 
 def setup():
-    db.create_tables([ GroupMembership, LabGroup, Student ])
+    db.create_tables([ GroupMembership, LabGroup, Student, TranscriptEntry ])
