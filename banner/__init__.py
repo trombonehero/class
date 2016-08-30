@@ -26,6 +26,12 @@ def setup_argparse(parser):
     classlist = subparsers.add_parser('classlist', help = 'fetch class list')
     classlist.add_argument('crn', help = 'Course Registration Number')
 
+    transcript = subparsers.add_parser('transcript', help = 'fetch transcript')
+    transcript.add_argument('--all', '-a', action = 'store_true',
+            help = "fetch entire class' transcripts")
+    transcript.add_argument('id', nargs = '?',
+            help = "individual student's ID (fetch only one transcript)")
+
 
 class urlmapper:
     def __init__(self, root):
