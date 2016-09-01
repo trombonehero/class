@@ -5,6 +5,7 @@ import banner
 import config
 import importlib
 import parse
+import plot
 
 
 args = argparse.ArgumentParser()
@@ -25,6 +26,9 @@ l = subparsers.add_parser('list', help = 'list students in the course')
 sort_keys = importlib.import_module('list').sort_keys
 l.add_argument('--sort-by', default = sort_keys[0],
         help = 'how to sort students (%s)' % ' | '.join(sort_keys))
+
+plotsub = subparsers.add_parser('plot', help = 'plot statistics')
+plot.setup_argparse(plotsub)
 
 args = args.parse_args()
 
