@@ -96,10 +96,6 @@ def fetch_transcript(browser, urls, term, student_id):
         sys.stderr.write('Error: %s\n' % e.message)
         sys.exit(1)
 
-    except ValueError, e:
-        sys.stderr.write('Error: %s\n' % e)
-        sys.exit(1)
-
 
 def save(db, student, courses):
     assert student is not None
