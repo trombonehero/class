@@ -110,7 +110,9 @@ def parse(soup):
                 columns = row.findAll('td')
 
                 if headers is None:
-                    break
+                    # This row probably describes transfer credit,
+                    # which is not a normal transcript entry for our purposes.
+                    continue
 
                 if len(columns) == len(headers) + 1:        # don't ask.
                     detail = dict(
