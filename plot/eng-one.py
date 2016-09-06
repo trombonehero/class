@@ -5,7 +5,8 @@ import numpy
 def run(args, db):
     from db import TranscriptEntry as Entry
 
-    data = collections.defaultdict(list)
+    courses = collections.defaultdict(list)
+    students = collections.defaultdict(list)
 
     for e in Entry.select().where(Entry.mark is not None):
         if e.mark is None:
@@ -27,20 +28,27 @@ def run(args, db):
                     (e.code == '1050'
                      or e.code == '1051'))
             ):
-            data[(e.subject, e.code)].append(e.mark)
+            courses[(e.subject, e.code)].append(e.mark)
+            students[e.student.student_id].append(e.mark)
 
 
     import matplotlib.pyplot as plt
 
-    fig, axes = plt.subplots(ncols = len(data))
+    dimensions = (3, len(courses))
+
+    plt.subplots(nrows = 2, ncols = len(courses))
     plt.title('Marks in Engineering One courses')
 
-    items = sorted(data.items(), key = lambda (course,m): course)
+    histaxes = plt.subplot2grid(dimensions, (0, 0), colspan = len(courses))
+    histaxes.hist([ sum(s) / len(s) for s in students.values() ], bins = 30)
+
+    items = sorted(courses.items(), key = lambda (course,m): course)
     for i, ((subject,course), marks) in enumerate(items):
-        axes[i].boxplot(marks)
-        axes[i].set_ylim([ 0, 100 ])
-        axes[i].set_xlabel('%s %s' % (subject, course))
-        axes[i].grid(True)
+        axes = plt.subplot2grid(dimensions, (1, i), rowspan = 2)
+        axes.boxplot(marks)
+        axes.set_ylim([ 0, 100 ])
+        axes.set_xlabel('%s %s' % (subject, course))
+        axes.grid(True)
 
     plt.show()
 
