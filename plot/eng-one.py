@@ -36,8 +36,8 @@ def run(args, db):
             students[stud_id].append(e.mark)
 
             pb = personal_best[stud_id]
-            current = pb[course] if course in pb else 0
-            pb[course] = e.mark if e.mark > current else current
+            previous = pb[course] if course in pb else 0
+            pb[course] = e.mark if e.mark > previous else previous
 
 
     import matplotlib.pyplot as plt
