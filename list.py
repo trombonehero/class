@@ -24,6 +24,7 @@ def run(args, db):
         'email': lambda s: '%20s' % s.email(),
         'group': lambda s: 'Group %-2d' % s.group(),
         'id': lambda s: '%9s' % s.student_id,
+        'level': lambda s: 'Graduate' if s.graduate_student else 'Undergrad',
         'name': lambda s: '%-24s' % s.name(),
         'username': lambda s: '%12s' % s.username,
     }
