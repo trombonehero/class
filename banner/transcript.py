@@ -47,6 +47,10 @@ def run(args, browser, db, urls):
             sys.stdout.write('%9s %-30s  ' % (s.student_id, s.name()))
 
             (_, courses) = fetch_transcript(browser, urls, term, s.student_id)
+            if courses is None:
+                sys.stdout.write('ERROR\n')
+                continue
+
             save(db, s, courses)
 
             sys.stdout.write('%3d courses\n' % len(courses))
@@ -64,9 +68,14 @@ def fetch_transcript(browser, urls, term, student_id):
         # The form that Banner returns here contains a challenge nonce,
         # so we need to use the form rather than go directly to the transcript.
         #
-        (form,) = result.soup.findAll(lambda tag: tag.name == 'form' and
-                                      tag['action'].endswith(store_id))
+        forms = result.soup.findAll(lambda tag: tag.name == 'form' and
+                                    tag['action'].endswith(store_id))
 
+        if len(forms) == 0:
+            sys.stderr.write('no verification form found for %s\n' % student_id)
+            return (None, None)
+
+        (form,) = forms
         form.input({ 'sname': store_id })
 
         result = browser.submit(form, urls.map(display_transcript))
