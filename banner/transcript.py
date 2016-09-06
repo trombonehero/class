@@ -18,14 +18,15 @@ def run(args, browser, db, urls):
     term = args.term
 
     if args.id:
-        (name, courses) = fetch_transcript(browser, urls, term, args.id)
+        formatted_id = '{0:09d}'.format(args.id)
+        (name, courses) = fetch_transcript(browser, urls, term, formatted_id)
 
         print('Retrieved transcript for %s' % name)
         print('')
         parse.transcript.print_courses(courses)
 
         try:
-            student = db.Student.get(student_id = args.id)
+            student = db.Student.get(student_id = formatted_id)
             save(db, student, courses)
 
         except peewee.DoesNotExist:
@@ -46,7 +47,8 @@ def run(args, browser, db, urls):
         for s in students:
             sys.stdout.write('%9s %-30s  ' % (s.student_id, s.name()))
 
-            (_, courses) = fetch_transcript(browser, urls, term, s.student_id)
+            formatted_id = '{0:09d}'.format(s.student_id)
+            (_, courses) = fetch_transcript(browser, urls, term, formatted_id)
             if courses is None:
                 sys.stdout.write('ERROR\n')
                 continue
