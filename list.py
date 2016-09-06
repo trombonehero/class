@@ -2,12 +2,23 @@ import sys
 
 sort_keys = [ 'name', 'username', 'id' ]
 
+formatters = {
+    'email': lambda s: '%20s' % s.email(),
+    'group': lambda s: 'Group %-2d' % s.group(),
+    'id': lambda s: '%9s' % s.student_id,
+    'level': lambda s: 'Graduate' if s.graduate_student else 'Undergrad',
+    'name': lambda s: '%-24s' % s.name(),
+    'username': lambda s: '%12s' % s.username,
+}
+
 
 def setup_argparse(parser):
     parser.add_argument('--sort-by', default = sort_keys[0],
         help = 'how to sort students (%s)' % ' | '.join(sort_keys))
 
-    parser.add_argument('details', help = 'details to show for each student',
+    parser.add_argument('details',
+            help = 'details to show for each student (possible details: %s)' %
+                ', '.join(sorted(formatters.keys())),
         nargs = '*', default = [ 'username', 'id', 'name', 'email', 'group' ])
 
 
@@ -18,15 +29,6 @@ def run(args, db):
         'name': Student.forename,
         'username': Student.username,
         'id': Student.student_id,
-    }
-
-    formatters = {
-        'email': lambda s: '%20s' % s.email(),
-        'group': lambda s: 'Group %-2d' % s.group(),
-        'id': lambda s: '%9s' % s.student_id,
-        'level': lambda s: 'Graduate' if s.graduate_student else 'Undergrad',
-        'name': lambda s: '%-24s' % s.name(),
-        'username': lambda s: '%12s' % s.username,
     }
 
     formatters = [ formatters[key] for key in args.details ]
