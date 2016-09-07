@@ -19,12 +19,12 @@ def run(args, db):
     f = sys.stdin if args.filename == '-' else open(args.filename)
 
     if args.to_all:
-        recipients = [ s.email() for s in Student.select() ]
+        recipients = [ s.email() for s in db.Student.select() ]
 
     else:
         recipients = [
             r if '@' in r
-                else Student.get(username = r).email()
+                else db.Student.get(username = r).email()
                 for r in args.to
         ]
 
