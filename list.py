@@ -1,4 +1,5 @@
-from db import Student
+from db import GroupMembership, Student
+import peewee
 import sys
 
 formatters = {
@@ -12,6 +13,7 @@ formatters = {
 
 sorters = {
     'name': Student.forename,
+    'group': GroupMembership.id,
     'id': Student.student_id,
     'level': Student.graduate_student,
     'username': Student.username,
@@ -36,7 +38,7 @@ def run(args, db):
 
     f = [ formatters[key] for key in args.details ]
 
-    students = Student.select()
+    students = Student.select().join(GroupMembership, peewee.JOIN.LEFT_OUTER)
 
     for s in students.order_by(sorters[args.sort_by]):
         print_details(s, f)
