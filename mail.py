@@ -38,6 +38,8 @@ def run(args, db):
         print(message)
 
     else:
+        print('Sending to: %s' % ' '.join(recipients))
+
         smtp = smtplib.SMTP('smtp.mun.ca')
         smtp.sendmail(args.sender, recipients, message.as_string())
         smtp.quit()
