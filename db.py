@@ -34,7 +34,7 @@ class Student(Model):
     def group(self):
         groups = self.groups.order_by(GroupMembership.id)
         if len(groups) == 0:
-            return -1
+            return None
         else:
             return groups[0].group.number
 

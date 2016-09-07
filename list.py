@@ -4,7 +4,7 @@ import sys
 
 formatters = {
     'email': lambda s: '%20s' % s.email(),
-    'group': lambda s: 'Group %-2d' % s.group(),
+    'group': lambda s: 'Group %-2d' % s.group() if s.group() else '(no group)',
     'id': lambda s: '%9s' % s.student_id,
     'level': lambda s: 'Graduate' if s.graduate_student else 'Undergrad',
     'name': lambda s: '%-24s' % s.name(),
