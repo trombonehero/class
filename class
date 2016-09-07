@@ -3,6 +3,7 @@
 import argparse
 import banner
 import config
+import group
 import importlib
 import mail
 import parse
@@ -24,6 +25,9 @@ parse.setup_argparse(parsesub)
 
 l = subparsers.add_parser('list', help = 'list students in the course')
 importlib.import_module('list').setup_argparse(l)
+
+group.setup_argparse(subparsers.add_parser('group',
+        help = 'group students together (e.g., for labs'))
 
 mail.setup_argparse(subparsers.add_parser('mail', help = 'send email to class'))
 
