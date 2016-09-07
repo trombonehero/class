@@ -14,6 +14,6 @@ database = 'sqlite://class.db'
 # 20xx03: Spring 20xx (May-Aug 20xx+1)
 #
 today = datetime.date.today()
-term = ((today.month - 9) % 12) / 4
+term = ((today.month - 9) % 12) / 4 + 1
 term = '%04d%02d' % (today.year - term / 2, term)
 
