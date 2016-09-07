@@ -12,8 +12,9 @@ formatters = {
 
 sorters = {
     'name': Student.forename,
-    'username': Student.username,
     'id': Student.student_id,
+    'level': Student.graduate_student,
+    'username': Student.username,
 }
 
 
