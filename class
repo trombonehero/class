@@ -4,6 +4,7 @@ import argparse
 import banner
 import config
 import importlib
+import mail
 import parse
 import plot
 
@@ -23,6 +24,8 @@ parse.setup_argparse(parsesub)
 
 l = subparsers.add_parser('list', help = 'list students in the course')
 importlib.import_module('list').setup_argparse(l)
+
+mail.setup_argparse(subparsers.add_parser('mail', help = 'send email to class'))
 
 plotsub = subparsers.add_parser('plot', help = 'plot statistics')
 plot.setup_argparse(plotsub)
