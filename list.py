@@ -29,6 +29,11 @@ def setup_argparse(parser):
 
 
 def run(args, db):
+    if args.sort_by not in sorters.keys():
+        sys.stderr.write("Invalid sort key: '%s'\nValid keys are: %s\n" % (
+            args.sort_by, ' '.join(sorters.keys())))
+        sys.exit(1)
+
     f = [ formatters[key] for key in args.details ]
 
     students = Student.select()
