@@ -31,12 +31,12 @@ def run(args, db):
         'id': Student.student_id,
     }
 
-    formatters = [ formatters[key] for key in args.details ]
+    f = [ formatters[key] for key in args.details ]
 
     students = Student.select()
 
     for s in students.order_by(sorters[args.sort_by]):
-        print_details(s, formatters)
+        print_details(s, f)
 
 
 def print_details(student, formatters):
