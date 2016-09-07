@@ -1,6 +1,5 @@
+from db import Student
 import sys
-
-sort_keys = [ 'name', 'username', 'id' ]
 
 formatters = {
     'email': lambda s: '%20s' % s.email(),
@@ -11,10 +10,16 @@ formatters = {
     'username': lambda s: '%12s' % s.username,
 }
 
+sorters = {
+    'name': Student.forename,
+    'username': Student.username,
+    'id': Student.student_id,
+}
+
 
 def setup_argparse(parser):
-    parser.add_argument('--sort-by', default = sort_keys[0],
-        help = 'how to sort students (%s)' % ' | '.join(sort_keys))
+    parser.add_argument('--sort-by', default = sorters.keys()[0],
+        help = 'how to sort students (%s)' % ' | '.join(sorters.keys()))
 
     parser.add_argument('details',
             help = 'details to show for each student (possible details: %s)' %
@@ -23,14 +28,6 @@ def setup_argparse(parser):
 
 
 def run(args, db):
-    from db import Student
-
-    sorters = {
-        'name': Student.forename,
-        'username': Student.username,
-        'id': Student.student_id,
-    }
-
     f = [ formatters[key] for key in args.details ]
 
     students = Student.select()
