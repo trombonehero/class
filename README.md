@@ -55,26 +55,18 @@ class lists and save the resulting student data into the local database
 (`banner fetch`).
 
 ```
-$ ./class banner -h
-usage: class banner [-h] [--banner-root BANNER_ROOT] [--ca-bundle CA_BUNDLE]
-                    [--credential-file CREDENTIAL_FILE] [--term TERM]
-                    {crn,classlist,transcript} ...
+$ class banner crn ENGI 3891
+Found one course section:
+201601 41327: ENGI 3891-001           95/100 registered (  5 remaining)
+$ class banner --term 201601 classlist 41327
+Foundations of Programming - ENGI 3891 001
+Sep 07, 2016 - Dec 16, 2016
+95 students
 
-positional arguments:
-  {crn,classlist,transcript}
-    crn                 find course CRN from Banner
-    classlist           fetch class list
-    transcript          fetch transcript
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --banner-root BANNER_ROOT
-                        Root URL for all Banner requests
-  --ca-bundle CA_BUNDLE
-                        path to CA certificate bundle
-  --credential-file CREDENTIAL_FILE
-                        username/password file (YAML format)
-  --term TERM           e.g., Fall 2016: 201601 [default: 201502]
+95 existing students, 0 new:
+$ class banner transcript --all
+201600001 Alice B Cool                     11 courses
+[...]
 ```
 
 It is helpful to create a file called `credentials.yaml` with your
