@@ -32,8 +32,14 @@ def run(args, db):
     message = email.mime.text.MIMEText(f.read(), 'plain', 'utf-8')
     message['Subject'] = args.subject
     message['From'] = args.sender
-    message['To'] = args.sender
-    message['Bcc'] = ','.join(recipients)
+
+    # Use BCC to hide multiple recipients' addresses from each other:
+    if len(recipients) == 1:
+        message['To'] = recipients[0]
+
+    else:
+        message['To'] = args.sender
+        message['Bcc'] = ','.join(recipients)
 
     if args.test:
         print(message)
