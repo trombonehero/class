@@ -35,8 +35,8 @@ for dirname in args.directory:
         dirname = dirname[len(prefix):]
 
 
-    components = dirname.split(os.sep)
-    if len(components) < 2:
+    components = dirname.strip().split(os.sep)
+    if len(components) < 2 or components[1] == '':
         continue
 
     (kind, name) = components[:2]
