@@ -8,7 +8,7 @@ def setup_argparse(parser):
     parser.add_argument('--test', help = "format message but don't send",
             action = 'store_true')
 
-    parser.add_argument('--to', help = 'student(s) to send to', nargs = '*')
+    parser.add_argument('--to', help = 'student(s) to send to')
     parser.add_argument('--to-all', help = 'send to all', action = 'store_true')
     parser.add_argument('--sender', help = "sender's address", required = True)
     parser.add_argument('--subject', help = 'message subject', required = True)
@@ -26,7 +26,7 @@ def run(args, db):
         recipients = [
             r if '@' in r
                 else db.Student.get(username = r).email()
-                for r in args.to
+                for r in args.to.split(',')
         ]
 
     message = email.mime.text.MIMEText(f.read(), 'plain', 'utf-8')
