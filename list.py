@@ -24,6 +24,9 @@ def setup_argparse(parser):
     parser.add_argument('--sort-by', default = sorters.keys()[0],
         help = 'how to sort students (%s)' % ' | '.join(sorters.keys()))
 
+    parser.add_argument('--reverse', action = 'store_true',
+        help = 'sort class list in reverse')
+
     parser.add_argument('details',
             help = 'details to show for each student (possible details: %s)' %
                 ', '.join(sorted(formatters.keys())),
@@ -40,7 +43,11 @@ def run(args, db):
 
     students = Student.select().join(GroupMembership, peewee.JOIN.LEFT_OUTER)
 
-    for s in students.order_by(sorters[args.sort_by]):
+    sorter = sorters[args.sort_by]
+    if args.reverse:
+        sorter = sorter.desc()
+
+    for s in students.order_by(sorter):
         print_details(s, f)
 
 
