@@ -8,16 +8,15 @@ import sys
 args = argparse.ArgumentParser()
 args.add_argument('--prefix')
 args.add_argument('--group-file', required = True)
-args.add_argument('filename', help = 'file (or -) with directory names')
+args.add_argument('directory', nargs = '+', help = 'directory names')
 args = args.parse_args()
 
-input_file = sys.stdin if args.filename == '-' else open(args.filename, 'r')
 groups = json.load(open(args.group_file))
 
 prefix = args.prefix
 affected = set()
 
-for dirname in input_file:
+for dirname in args.directory:
     if prefix:
         if not dirname.startswith(prefix):
             raise ValueError, "Directory '%s' does not start with '%s'" % (
