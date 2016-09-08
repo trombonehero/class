@@ -4,6 +4,7 @@ import sys
 
 
 def setup_argparse(parser):
+    parser.add_argument('--smtp', help = 'SMTP server', default = 'smtp.mun.ca')
     parser.add_argument('--test', help = "format message but don't send",
             action = 'store_true')
 
@@ -40,6 +41,6 @@ def run(args, db):
     else:
         print('Sending to: %s' % ' '.join(recipients))
 
-        smtp = smtplib.SMTP('smtp.mun.ca')
+        smtp = smtplib.SMTP(args.smtp)
         smtp.sendmail(args.sender, recipients, message.as_string())
         smtp.quit()
