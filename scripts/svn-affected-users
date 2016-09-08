@@ -8,6 +8,7 @@ import sys
 args = argparse.ArgumentParser()
 args.add_argument('--prefix')
 args.add_argument('--group-file', required = True)
+args.add_argument('--user-suffix')
 args.add_argument('directory', nargs = '+', help = 'directory names')
 args = args.parse_args()
 
@@ -15,6 +16,14 @@ groups = json.load(open(args.group_file))
 
 prefix = args.prefix
 affected = set()
+
+
+def email(username):
+    if args.user_suffix is None:
+        return username
+
+    return username + args.user_suffix
+
 
 for dirname in args.directory:
     if prefix:
@@ -33,10 +42,10 @@ for dirname in args.directory:
     (kind, name) = components[:2]
 
     if kind == 'groups':
-        affected = affected.union(groups[components[1]])
+        affected = affected.union(email(s) for s in groups[name])
 
     elif kind == 'students':
-        affected.add(components[1])
+        affected.add(email(name))
 
     else:
         continue
