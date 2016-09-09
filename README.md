@@ -151,6 +151,21 @@ $ class group --auto
 ```
 
 
+### `svn` subcommand
+
+This command can be used to generate configuration files for a Subversion
+repository (e.g., `authz` for access control and `htpasswd` for hashed
+passwords).
+It also generates a `groups.json` file that describes lab groups for the
+`scripts/svn-affected-users` script.
+
+```
+class svn --prefix 2016 --instructors me1234 --tas ta1234,ta5678
+Writing 50 groups and 100 students to authz
+Writing 50 groups to groups.json
+```
+
+
 ### `mail` subcommand
 
 The `class mail` command can be used to email groups of students, using BCC as
