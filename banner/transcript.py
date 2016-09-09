@@ -1,3 +1,4 @@
+import datetime
 import parse.transcript
 import peewee
 import requests
@@ -38,8 +39,7 @@ def run(args, browser, db, urls):
     else:
         students = (
             db.Student.select()
-                      .join(db.TranscriptEntry, peewee.JOIN.LEFT_OUTER)
-                      .where(db.TranscriptEntry.student == None)
+                      .where(db.Student.transcript_fetched == None)
         )
 
         print('Retrieving %d transcripts:' % students.count())
@@ -114,3 +114,6 @@ def save(db, student, courses):
         except ValueError: pass
 
         e.save()
+
+    student.transcript_fetched = datetime.datetime.now()
+    student.save()

@@ -24,6 +24,7 @@ class Student(Model):
     surname = TextField()
     pw_hash = TextField(null = True)
     graduate_student = BooleanField(default = False)
+    transcript_fetched = DateTimeField(null = True)
 
     class Meta:
         database = db
