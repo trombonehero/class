@@ -1,4 +1,4 @@
-from db import LabGroup, Student
+import db
 import errno
 import json
 import os
@@ -11,12 +11,6 @@ def setup_argparse(parser):
     parser.add_argument('-p', '--prefix', default = '',
             help = 'prefix for all directory paths (e.g., a year)')
 
-    parser.add_argument('-i', '--instructors', required = True,
-            help = 'username(s) of course instructor(s)')
-
-    parser.add_argument('-t', '--tas',
-            help = 'comma-separated usernames of TAs')
-
 
 def run(args, db):
     try: os.makedirs(args.outdir)
@@ -26,10 +20,12 @@ def run(args, db):
 
     groups = dict(
         (g.number, [ m.student.username for m in g.memberships ])
-        for g in LabGroup.select()
+        for g in db.LabGroup.select()
     )
 
-    students = Student.select()
+    students = db.Student.select()
+    instructors = db.Instructor.select().where(db.Instructor.ta == False)
+    tas = db.Instructor.select().where(db.Instructor.ta == True)
 
 
     print('Writing %d groups and %d students to authz' % (
@@ -49,7 +45,10 @@ tas = {tas}
 [/TAs]
 @tas = rw
 
-'''.format(**vars(args)))
+'''.format(
+        instructors = ','.join(i.username for i in instructors),
+        tas = ','.join(t.username for t in tas))
+    )
 
     for (number, members) in groups.items():
         path = os.path.join(args.prefix, 'groups', str(number))

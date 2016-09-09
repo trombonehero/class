@@ -10,7 +10,7 @@ def setup_argparse(parser):
 
     parser.add_argument('--to', help = 'student(s) to send to')
     parser.add_argument('--to-all', help = 'send to all', action = 'store_true')
-    parser.add_argument('--sender', help = "sender's address", required = True)
+    parser.add_argument('--sender', help = "sender")
     parser.add_argument('--subject', help = 'message subject', required = True)
 
     parser.add_argument('filename', nargs = '?', default = '-')
@@ -18,6 +18,15 @@ def setup_argparse(parser):
 
 def run(args, db):
     f = sys.stdin if args.filename == '-' else open(args.filename)
+
+    if args.sender:
+        if '@' in args.sender: sender = args.sender
+        else:
+            i = db.Instructor.get(db.Instructor.username == args.sender)
+            sender = i.username
+
+    else:
+        sender = db.Instructor.get().username
 
     if args.to_all:
         recipients = [ s.email() for s in db.Student.select() ]
@@ -31,14 +40,14 @@ def run(args, db):
 
     message = email.mime.text.MIMEText(f.read(), 'plain', 'utf-8')
     message['Subject'] = args.subject
-    message['From'] = args.sender
+    message['From'] = sender
 
     # Use BCC to hide multiple recipients' addresses from each other:
     if len(recipients) == 1:
         message['To'] = recipients[0]
 
     else:
-        message['To'] = args.sender
+        message['To'] = sender
         message['Bcc'] = ','.join(recipients)
 
     if args.test:
@@ -48,5 +57,5 @@ def run(args, db):
         print('Sending to: %s' % ' '.join(recipients))
 
         smtp = smtplib.SMTP(args.smtp)
-        smtp.sendmail(args.sender, recipients, message.as_string())
+        smtp.sendmail(sender, recipients, message.as_string())
         smtp.quit()

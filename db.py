@@ -16,6 +16,28 @@ providers = {
 db = providers[provider](database)
 
 
+class Instructor(Model):
+    username = CharField(unique = True, index = True)
+    name = TextField()
+    pw_hash = TextField(null = True)
+    ta = BooleanField()
+
+    class Meta:
+        database = db
+
+    def email(self):
+        return '%s@mun.ca' % self.username
+
+    def name(self):
+        return '%s %s' % (self.forename, self.surname)
+
+    def __str__(self):
+        return '%s %s (%s)' % (self.forename, self.surname, self.username)
+
+    def __repr__(self):
+        return '%s (%s %s: %s)' % (self.username, self.forename, self.surname)
+
+
 class Student(Model):
     username = CharField(unique = True, index = True)
     student_id = IntegerField(unique = True, primary_key = True)
@@ -92,4 +114,6 @@ def connect():
     db.connect()
 
 def setup():
-    db.create_tables([ GroupMembership, LabGroup, Student, TranscriptEntry ])
+    db.create_tables([
+        GroupMembership, Instructor, LabGroup, Student, TranscriptEntry
+    ])
