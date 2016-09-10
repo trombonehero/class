@@ -11,9 +11,11 @@ def setup_argparse(parser):
     parser.add_argument('--to', help = 'student(s) to send to')
     parser.add_argument('--to-all', help = 'send to all', action = 'store_true')
     parser.add_argument('--sender', help = "sender")
-    parser.add_argument('--subject', help = 'message subject', required = True)
 
-    parser.add_argument('filename', nargs = '?', default = '-')
+    parser.add_argument('-f', '--filename', default = '-',
+            help = 'file containing message (or stdin)')
+
+    parser.add_argument('subject', help = 'message subject')
 
 
 def run(args, db):
