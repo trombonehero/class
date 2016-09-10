@@ -31,12 +31,16 @@ def run(args, db):
     if args.to_all:
         recipients = [ s.email() for s in db.Student.select() ]
 
-    else:
+    elif args.to:
         recipients = [
             r if '@' in r
                 else db.Student.get(username = r).email()
                 for r in args.to.split(',')
         ]
+
+    else:
+        sys.stderr.write('Must specify --to or --to-all\n')
+        sys.exit(1)
 
     message = email.mime.text.MIMEText(f.read(), 'plain', 'utf-8')
     message['Subject'] = args.subject
