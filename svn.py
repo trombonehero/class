@@ -1,5 +1,6 @@
 import db
 import errno
+import itertools
 import json
 import os
 
@@ -23,9 +24,9 @@ def run(args, db):
         for g in db.LabGroup.select()
     )
 
-    students = db.Student.select()
-    instructors = db.Instructor.select().where(db.Instructor.ta == False)
-    tas = db.Instructor.select().where(db.Instructor.ta == True)
+    students = list(db.Student.select())
+    instructors = list(db.Instructor.select().where(db.Instructor.ta == False))
+    tas = list(db.Instructor.select().where(db.Instructor.ta == True))
 
 
     print('Writing %d groups and %d students to authz' % (
@@ -63,6 +64,16 @@ tas = {tas}
         path = os.path.join(args.prefix, 'students', s.username)
         authz.write('[/%s]\n' % path)
         authz.write('%s = rw\n\n' % s.username)
+
+
+    print('Writing %d instructors, %d TAs and %d students to %s' % (
+        len(instructors), len(tas), len(students), 'htpasswd'))
+
+    htpasswd = open(os.path.join(args.outdir, 'htpasswd'), 'w')
+
+    for user in itertools.chain(instructors, tas, students):
+        if user.pw_hash:
+            htpasswd.write('%s:%s\n' % (user.username, user.pw_hash))
 
 
     print('Writing %d groups to %s' % (len(groups), 'groups.json'))
