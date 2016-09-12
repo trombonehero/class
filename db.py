@@ -28,11 +28,14 @@ class Instructor(Model):
     def email(self):
         return '%s@mun.ca' % self.username
 
+    def role(self):
+        return 'TA' if self.ta else 'instructor'
+
     def __str__(self):
-        return '%s %s (%s)' % (self.forename, self.surname, self.username)
+        return '%s (%s)' % (self.name, self.username)
 
     def __repr__(self):
-        return '%s (%s %s: %s)' % (self.username, self.forename, self.surname)
+        return '%s: %s (%s)' % (self.username, self.name, self.role())
 
 
 class Student(Model):
