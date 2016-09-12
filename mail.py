@@ -1,4 +1,5 @@
 import email.mime.text
+import jinja2
 import smtplib
 import sys
 
@@ -26,44 +27,41 @@ def run(args, db):
     if args.sender:
         if '@' in args.sender: sender = args.sender
         else:
-            i = db.Instructor.get(db.Instructor.username == args.sender)
-            sender = i.username
+            sender = db.Instructor.get(db.Instructor.username == args.sender)
 
     else:
-        sender = db.Instructor.get().username
+        sender = db.Instructor.get()
 
     if args.to_all:
-        recipients = [ s.email() for s in db.Student.select() ]
+        recipients = db.Student.select()
 
     elif args.to:
-        recipients = [
-            r if '@' in r
-                else db.Student.get(username = r).email()
-                for r in args.to.split(',')
-        ]
+        recipients = (
+            db.Student.get(username = r) for r in args.to.split(',')
+        )
 
     else:
         sys.stderr.write('Must specify --to or --to-all\n')
         sys.exit(1)
 
-    message = email.mime.text.MIMEText(f.read(), 'plain', args.encoding)
-    message['Subject'] = args.subject
-    message['From'] = sender
+    template = jinja2.Template(f.read())
 
-    # Use BCC to hide multiple recipients' addresses from each other:
-    if len(recipients) == 1:
-        message['To'] = recipients[0]
+    for student in recipients:
+        content = template.render(student = student)
+        message = email.mime.text.MIMEText(content, 'plain', args.encoding)
 
-    else:
-        message['To'] = sender
-        message['Bcc'] = ','.join(recipients)
+        message['To'] = student.email()
+        message['Subject'] = args.subject
+        message['From'] = "%s <%s>" % (sender.name, sender.email())
 
-    if args.test:
-        print(message)
+        if args.test:
+            print('---')
+            print(message)
+            print('---\n')
 
-    else:
-        print('Sending to: %s' % ' '.join(recipients))
+        else:
+            print('Sending to %s:' % student.email())
 
-        smtp = smtplib.SMTP(args.smtp)
-        smtp.sendmail(sender, recipients, message.as_string())
-        smtp.quit()
+            smtp = smtplib.SMTP(args.smtp)
+            smtp.sendmail(sender, [ student.email() ], message.as_string())
+            smtp.quit()
