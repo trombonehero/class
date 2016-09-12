@@ -19,7 +19,7 @@ def run(args, browser, db, urls):
     term = args.term
 
     if args.id:
-        formatted_id = '{0:09d}'.format(args.id)
+        formatted_id = '{0:09d}'.format(int(args.id))
         (name, courses) = fetch_transcript(browser, urls, term, formatted_id)
 
         print('Retrieved transcript for %s' % name)
