@@ -13,6 +13,7 @@ def setup_argparse(parser):
 
     parser.add_argument('--to', help = 'student(s) to send to')
     parser.add_argument('--to-all', help = 'send to all', action = 'store_true')
+    parser.add_argument('--filter', help = 'SQL filter for --to-all')
     parser.add_argument('--sender', help = "sender")
 
     parser.add_argument('-f', '--filename', default = '-',
@@ -34,6 +35,9 @@ def run(args, db):
 
     if args.to_all:
         recipients = db.Student.select()
+
+        if args.filter:
+            recipients = recipients.where(db.SQL(args.filter))
 
     elif args.to:
         recipients = (

@@ -21,6 +21,8 @@ sorters = {
 
 
 def setup_argparse(parser):
+    parser.add_argument('--filter', help = 'SQL filter to apply')
+
     parser.add_argument('--sort-by', default = sorters.keys()[0],
         help = 'how to sort students (%s)' % ' | '.join(sorters.keys()))
 
@@ -42,6 +44,9 @@ def run(args, db):
     f = [ formatters[key] for key in args.details ]
 
     students = Student.select().join(GroupMembership, peewee.JOIN.LEFT_OUTER)
+
+    if args.filter:
+        students = students.where(db.SQL(args.filter))
 
     sorter = sorters[args.sort_by]
     if args.reverse:
