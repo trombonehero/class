@@ -4,6 +4,8 @@ import sys
 
 
 def setup_argparse(parser):
+    parser.add_argument('--encoding', help = 'test encoding (default: utf-8)',
+            default = 'utf-8')
     parser.add_argument('--smtp', help = 'SMTP server', default = 'smtp.mun.ca')
     parser.add_argument('--test', help = "format message but don't send",
             action = 'store_true')
@@ -44,7 +46,7 @@ def run(args, db):
         sys.stderr.write('Must specify --to or --to-all\n')
         sys.exit(1)
 
-    message = email.mime.text.MIMEText(f.read(), 'plain', 'utf-8')
+    message = email.mime.text.MIMEText(f.read(), 'plain', args.encoding)
     message['Subject'] = args.subject
     message['From'] = sender
 
