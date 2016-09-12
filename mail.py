@@ -68,5 +68,6 @@ def run(args, db):
             print('Sending to %s:' % student.email())
 
             smtp = smtplib.SMTP(args.smtp)
-            smtp.sendmail(sender, [ student.email() ], message.as_string())
+            recipient = [ student.email() ]
+            smtp.sendmail(sender.email(), recipient, message.as_string())
             smtp.quit()
