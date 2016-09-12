@@ -22,6 +22,28 @@ def setup_argparse(parser):
     parser.add_argument('subject', help = 'message subject')
 
 
+class SMTPSender:
+    def __init__(self, server):
+        self.smtp = smtplib.SMTP(server)
+
+    def done(self):
+        return self.smtp.quit()
+
+    def send(self, sender, recipient, message):
+        print('Sending to %s:' % student.email())
+        self.smtp.sendmail(sender, recipient, message.as_string())
+
+
+class TestSender:
+    def done(self):
+        pass
+
+    def send(self, sender, recipient, message):
+        print('---')
+        print(message)
+        print('---\n')
+
+
 def run(args, db):
     f = sys.stdin if args.filename == '-' else open(args.filename)
 
@@ -48,6 +70,7 @@ def run(args, db):
         sys.stderr.write('Must specify --to or --to-all\n')
         sys.exit(1)
 
+    send = TestSender() if args.test else SMTPSender(args.smtp)
     template = jinja2.Template(f.read())
 
     for student in recipients:
@@ -59,15 +82,6 @@ def run(args, db):
         message['Subject'] = args.subject
         message['From'] = "%s <%s>" % (sender.name, sender.email())
 
-        if args.test:
-            print('---')
-            print(message)
-            print('---\n')
+        send.send(sender.email(), [ student.email() ], message)
 
-        else:
-            print('Sending to %s:' % student.email())
-
-            smtp = smtplib.SMTP(args.smtp)
-            recipient = [ student.email() ]
-            smtp.sendmail(sender.email(), recipient, message.as_string())
-            smtp.quit()
+    send.done()
