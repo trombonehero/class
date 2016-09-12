@@ -28,9 +28,6 @@ class Instructor(Model):
     def email(self):
         return '%s@mun.ca' % self.username
 
-    def name(self):
-        return '%s %s' % (self.forename, self.surname)
-
     def __str__(self):
         return '%s %s (%s)' % (self.forename, self.surname, self.username)
 
