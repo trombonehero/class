@@ -55,6 +55,7 @@ def run(args, db):
         message = email.mime.text.MIMEText(content, 'plain', args.encoding)
 
         message['To'] = student.email()
+        message['Cc'] = sender.email()
         message['Subject'] = args.subject
         message['From'] = "%s <%s>" % (sender.name, sender.email())
 
