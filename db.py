@@ -56,7 +56,7 @@ class Student(Model):
         if len(groups) == 0:
             return None
         else:
-            return groups[0].group.number
+            return groups[0].group
 
     def name(self):
         return '%s %s' % (self.forename, self.surname)
