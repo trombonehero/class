@@ -31,8 +31,8 @@ class SMTPSender:
         return self.smtp.quit()
 
     def send(self, sender, recipient, message):
-        print('Sending to %s:' % student.email())
-        self.smtp.sendmail(sender, recipient, message.as_string())
+        print('Sending to %s' % recipient)
+        self.smtp.sendmail(sender, [ recipient ], message.as_string())
 
 
 class TestSender:
@@ -86,6 +86,6 @@ def run(args, db):
         message['Subject'] = args.subject
         message['From'] = "%s <%s>" % (sender.name, sender.email())
 
-        send.send(sender.email(), [ student.email() ], message)
+        send.send(sender.email(), student.email(), message)
 
     send.done()
