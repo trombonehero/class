@@ -1,5 +1,6 @@
 import email.mime.text
 import jinja2
+import peewee
 import smtplib
 import sys
 
@@ -56,7 +57,10 @@ def run(args, db):
         sender = db.Instructor.get()
 
     if args.to_all:
-        recipients = db.Student.select()
+        recipients = (
+                db.Student.select()
+                          .join(db.GroupMembership, peewee.JOIN.LEFT_OUTER)
+        )
 
         if args.filter:
             recipients = recipients.where(db.SQL(args.filter))
