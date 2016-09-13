@@ -23,11 +23,11 @@ def run(args, db):
         (g.number, [ m.student.username for m in g.memberships ])
         for g in db.LabGroup.select()
     )
+    groups[0] = [ '@instructors', '@tas' ]
 
     students = list(db.Student.select())
     instructors = list(db.Instructor.select().where(db.Instructor.ta == False))
     tas = list(db.Instructor.select().where(db.Instructor.ta == True))
-
 
     print('Writing %d groups and %d students to authz' % (
         len(groups), len(students)))
