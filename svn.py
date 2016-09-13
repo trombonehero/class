@@ -43,13 +43,14 @@ tas = {tas}
 @instructors = rw
 @tas = r
 
-[/TAs]
+[/{ta_dir}]
 @tas = rw
 
 '''.format(
         instructors = ','.join(i.username for i in instructors),
-        tas = ','.join(t.username for t in tas))
-    )
+        tas = ','.join(t.username for t in tas),
+        ta_dir = os.path.join(args.prefix, 'TAs')
+    ))
 
     for (number, members) in groups.items():
         path = os.path.join(args.prefix, 'groups', str(number))
