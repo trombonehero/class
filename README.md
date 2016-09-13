@@ -11,7 +11,7 @@ The simplest way to use `class` is to run it directly from a source checkout.
 After installing a few Python dependencies:
 
 ```sh
-$ pip install humanize inflect mechanicalsoup passlib peewee
+$ pip install humanize inflect mechanicalsoup passlib peewee xkcdpass
 ```
 
 clone this repository and test that you can run the `class` command:
