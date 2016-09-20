@@ -15,7 +15,8 @@ def setup_argparse(parser):
     parser.add_argument('-n', '--no-save', action = 'store_true',
             help = "don't save: test password initialization")
 
-    parser.add_argument('--wordfile', help = 'file containing source words')
+    parser.add_argument('-w', '--wordfile',
+            help = 'file containing source words')
 
     parser.add_argument('username', nargs = '*',
             help = 'users to create passwords for')
