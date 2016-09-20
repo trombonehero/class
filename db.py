@@ -93,6 +93,11 @@ class GroupMembership(Model):
     def __str__(self):
         return '%s: group %d' % (str(self.student), self.group.number)
 
+    def __repr__(self):
+        return 'GroupMembership{group: %s, student: %s/%s}' % (
+            self.group.number, self.student.username, self.student.student_id
+        )
+
     class Meta:
         database = db
 
