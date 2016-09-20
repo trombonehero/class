@@ -55,7 +55,10 @@ class Student(Model):
         return '%s@mun.ca' % self.username
 
     def group(self):
-        groups = self.groups.order_by(GroupMembership.id)
+        # TODO: figure out why .desc() doesn't do what we want it to do
+        groups = sorted(self.groups, key = lambda g: g.group_id,
+                reverse = True)
+
         if len(groups) == 0:
             return None
         else:
