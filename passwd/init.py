@@ -12,6 +12,9 @@ def setup_argparse(parser):
     parser.add_argument('--length', default = 4,
             help = 'number of words to use in each password')
 
+    parser.add_argument('-n', '--no-save', action = 'store_true',
+            help = "don't save: test password initialization")
+
     parser.add_argument('--wordfile', help = 'file containing source words')
 
     parser.add_argument('username', nargs = '*',
@@ -45,5 +48,7 @@ def run(args, db):
         htpasswd.set_password(user.username, password)
 
         print('%20s: %s' % (user.username, password))
-        user.pw_hash = htpasswd.get_hash(user.username)
-        user.save()
+
+        if not args.no_save:
+            user.pw_hash = htpasswd.get_hash(user.username)
+            user.save()
