@@ -45,7 +45,11 @@ def run(args, db):
 
     f = [ formatters[key] for key in args.details ]
 
-    students = Student.select().join(GroupMembership, peewee.JOIN.LEFT_OUTER)
+    students = (
+            Student.select()
+                   .join(GroupMembership)
+                   .group_by(GroupMembership.student)
+    )
 
     if args.filter:
         students = students.where(db.SQL(args.filter))
