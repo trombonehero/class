@@ -4,7 +4,9 @@ import sys
 
 
 def setup_argparse(parser):
-    parser.add_argument('--auto', help = 'automatically group remainder')
+    parser.add_argument('--auto', action = 'store_true',
+            help = 'automatically group remainder')
+
     parser.add_argument('students', help = 'students to group together',
             nargs = '*')
 
