@@ -6,8 +6,10 @@ import xkcdpass.xkcd_password as xkcd
 
 
 def setup_argparse(parser):
-    parser.add_argument('--all', action = 'store_true',
-            help = 'initialize all currently-unset passwords')
+    parser.add_argument('--all-students', action = 'store_true',
+            help = "initialize all currently-unset students' passwords")
+
+    parser.add_argument('--filter', help = 'SQL filter for --all-students')
 
     parser.add_argument('--length', default = 4,
             help = 'number of words to use in each password')
@@ -23,8 +25,8 @@ def setup_argparse(parser):
 
 
 def run(args, db):
-    if (len(args.username) == 0) != args.all:
-        sys.stderr.write('Must specify usernames or --all\n')
+    if (len(args.username) == 0) != args.all_students:
+        sys.stderr.write('Must specify usernames or --all-students\n')
         sys.exit(1)
 
     if args.wordfile:
@@ -32,13 +34,29 @@ def run(args, db):
     else:
         words = xkcd.locate_wordfile()
 
-    instructors = db.Instructor.select().where(db.Instructor.pw_hash == None)
-    students = db.Student.select().where(db.Student.pw_hash == None)
+    students = (
+            db.Student.select()
+                      .where(db.Student.pw_hash == None)
+                      .join(db.GroupMembership)
+                      .group_by(db.GroupMembership.student)
+                      .order_by(db.GroupMembership.group)
+    )
 
-    if not args.all:
+    if args.all_students:
+        instructors = []
+
+    else:
         usernames = args.username
-        instructors = instructors.where(db.Instructor.username << usernames)
+
         students = students.where(db.Student.username << usernames)
+        instructors = (
+                db.Instructor.select()
+                             .where(db.Instructor.pw_hash == None)
+                             .where(db.Instructor.username << usernames)
+        )
+
+    if args.filter:
+        students = students.where(db.SQL(args.filter))
 
     # Create a temporary, in-memory htpasswd "file" to hold generated passwords
     # in the proper Apache htpasswd format
@@ -48,7 +66,12 @@ def run(args, db):
         password = xkcd.generate_xkcdpassword(words, int(args.length))
         htpasswd.set_password(user.username, password)
 
-        print('%20s: %s' % (user.username, password))
+        print(user.name())
+        print('Username:      %s' % user.username)
+        print('Password:      %s' % password)
+        print('Lab group(s):  %s' % ', '.join([
+            str(g.group_id) for g in user.groups ]))
+        print('')
 
         if not args.no_save:
             user.pw_hash = htpasswd.get_hash(user.username)
