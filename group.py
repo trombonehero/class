@@ -15,7 +15,8 @@ def run(args, db):
     from db import GroupMembership, Student
 
     students = [ Student.get(username = name) for name in args.students ]
-    create_group(students, db)
+    if len(students) > 0:
+        create_group(students, db)
 
     if args.auto:
         group_remainder(db)
