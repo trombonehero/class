@@ -21,6 +21,7 @@ class Instructor(Model):
     name = TextField()
     pw_hash = TextField(null = True)
     ta = BooleanField()
+    groups = set()
 
     class Meta:
         database = db
