@@ -34,6 +34,8 @@ def create_group(students, db):
 
 
 def group_remainder(db):
+    from db import GroupMembership, Student
+
     ungrouped = (
         Student.select()
                .join(GroupMembership, peewee.JOIN.LEFT_OUTER)
@@ -47,7 +49,7 @@ def group_remainder(db):
     groups = list(ugrad_groups) + list(grad_groups)
     print('Grouped %d students into %d groups:' % (len(ungrouped), len(groups)))
     for students in groups:
-        create_group(students)
+        create_group(students, db)
 
     print('ungrouped: %d' %
         Student.select(peewee.fn.Count())
