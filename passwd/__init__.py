@@ -6,6 +6,7 @@ def setup_argparse(parser):
 
     subcommands = {
         'init': 'initialized unset passwords',
+        'reset': 'reset user passwords',
     }
 
     for (name, description) in subcommands.items():
