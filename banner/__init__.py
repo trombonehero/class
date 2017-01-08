@@ -7,6 +7,24 @@ import requests
 import sys
 
 
+class ParseError(BaseException):
+    def __init__(self, message, soup):
+        import codecs
+        import tempfile
+
+        self.message = message
+        self.soup = soup
+
+        self.filename = tempfile.NamedTemporaryFile().name
+        self.file = codecs.open(self.filename, 'w', 'utf-8')
+
+        self.file.write(soup.prettify())
+
+    def __str__(self):
+        return 'ParseError: %s (see contents of %s)' % (
+                self.message, self.filename)
+
+
 def setup_argparse(parser):
     parser.add_argument('--banner-root', default = config.banner_root,
             help = 'Root URL for all Banner requests')
