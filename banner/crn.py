@@ -17,8 +17,18 @@ def run(args, browser, db, urls):
         if not result.ok: raise ValueError, result
         soup = result.soup
 
-        (form,) = soup.findAll(lambda i: i.name == 'form' and
-                                      i['action'].endswith('CRNQueryResults'))
+        forms = soup.findAll(lambda i: i.name == 'form' and
+                                       i['action'].endswith('CRNQueryResults'))
+
+        if len(forms) != 1:
+            message = 'unable to parse CRNQueryResults from page: '
+
+            if len(forms) == 0: message += 'no such form'
+            else: message += 'too many forms'
+
+            raise banner.ParseError(message, soup)
+
+        (form,) = forms
 
         form.find('input', { 'name': 'p_term' })['value'] = args.term
 
