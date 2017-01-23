@@ -11,28 +11,33 @@ set_crn = 'twgwlibs.P_CRNSelect'
 
 def run(args, browser, db, urls):
     try:
-        result = browser.post(urls.map(set_crn), {
-            'p_term': args.term,
-            'p_crn': args.crn,
-            'p_ret_loc': class_list,
-        })
-        if not result.ok: raise ValueError, result
+        for crn in args.crn:
+            print('Fetching classlist for CRN %s' % crn)
 
-        result = browser.get(urls.map(class_list))
-        if not result.ok: raise ValueError, result
+            result = browser.post(urls.map(set_crn), {
+                'p_term': args.term,
+                'p_crn': crn,
+                'p_ret_loc': class_list,
+            })
+            if not result.ok: raise ValueError, result
 
-        (course_info, students) = parse.classlist.parse(result.soup)
+            result = browser.get(urls.map(class_list))
+            if not result.ok: raise ValueError, result
 
-        print(course_info['name'])
-        print(course_info['duration'])
-        print('%d students' % len(students))
-        print('')
+            (course_info, students) = parse.classlist.parse(result.soup)
 
-        (new, existing) = parse.classlist.save_students(students)
-        print('%d existing students, %d new:' % (len(existing), len(new)))
+            print(course_info['name'])
+            print(course_info['duration'])
+            print('%d students' % len(students))
+            print('')
 
-        for s in new:
-            print('%12s %9s %-24s' % (s.username, s.student_id, s.name()))
+            (new, existing) = parse.classlist.save_students(students)
+            print('%d existing students, %d new:' % (len(existing), len(new)))
+
+            for s in new:
+                print('%12s %9s %-24s' % (s.username, s.student_id, s.name()))
+
+            print('')
 
 
     except requests.exceptions.ConnectionError, e:

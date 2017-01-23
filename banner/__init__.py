@@ -5,15 +5,23 @@ import mechanicalsoup
 import os
 import requests
 import sys
+import traceback
 
 
 class ParseError(BaseException):
-    def __init__(self, message, soup):
+    def __init__(self, message, soup, cause = None):
+        """
+        message: a user-readable string
+        soup: the BeautifulSoup object for the complete web page
+        cause: a (type,value,traceback) triple from sys.exc_info()
+        """
+
         import codecs
         import tempfile
 
         self.message = message
         self.soup = soup
+        self.cause = cause
 
         self.filename = tempfile.NamedTemporaryFile().name
         self.file = codecs.open(self.filename, 'w', 'utf-8')
@@ -21,6 +29,9 @@ class ParseError(BaseException):
         self.file.write(soup.prettify())
 
     def __str__(self):
+        if self.cause:
+            traceback.print_exception(*self.cause)
+
         return 'ParseError: %s (see contents of %s)' % (
                 self.message, self.filename)
 
@@ -42,7 +53,8 @@ def setup_argparse(parser):
     crn.add_argument('course_number', help = 'course number (e.g., 3891)')
 
     classlist = subparsers.add_parser('classlist', help = 'fetch class list')
-    classlist.add_argument('crn', help = 'Course Registration Number')
+    classlist.add_argument('crn', help = 'Course Registration Number',
+            nargs = '+')
 
     transcript = subparsers.add_parser('transcript', help = 'fetch transcript')
     transcript.add_argument('--all', '-a', action = 'store_true',
