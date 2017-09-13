@@ -66,13 +66,18 @@ def run(args, db):
         password = xkcd.generate_xkcdpassword(words, int(args.length))
         htpasswd.set_password(user.username, password)
 
-        print(user.name())
-        print('Username:      %s' % user.username)
-        print('Password:      %s' % password)
-        print('Lab group(s):  %s' % ', '.join([
-            str(g.group_id) for g in user.groups ]))
-        print('')
+        f = open(user.username + '.mail', 'w')
+
+        f.write('''
+%s
+Username:       %s
+Password:       %s
+Lab group(s):   %s
+''' % (user.name(), user.username, password,
+       ', '.join([ str(g.group_id) for g in user.groups ])))
 
         if not args.no_save:
             user.pw_hash = htpasswd.get_hash(user.username)
             user.save()
+
+        f.close()
