@@ -1,3 +1,4 @@
+import banner
 import datetime
 import parse.transcript
 import peewee
@@ -91,7 +92,11 @@ def fetch_transcript(browser, urls, term, student_id):
         })
         if not result.ok: raise ValueError, result
 
-        return parse.transcript.parse(result.soup)
+        try: return parse.transcript.parse(result.soup)
+        except ValueError, e:
+            exc_info = sys.exc_info()
+            msg = str(e)
+            raise banner.ParseError(msg, result.soup, exc_info)
 
 
     except requests.exceptions.ConnectionError, e:
