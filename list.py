@@ -1,4 +1,4 @@
-from db import GroupMembership, Student
+from db import GroupMembership, LabGroup, Student
 import peewee
 import sys
 
@@ -47,8 +47,9 @@ def run(args, db):
 
     students = (
             Student.select()
-                   .join(GroupMembership)
-                   .group_by(GroupMembership.student)
+                   .join(GroupMembership, peewee.JOIN.LEFT_OUTER)
+                   .join(LabGroup, peewee.JOIN.LEFT_OUTER)
+                   .order_by(LabGroup.number)
     )
 
     if args.filter:
