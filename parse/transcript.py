@@ -95,13 +95,17 @@ def parse(soup):
                 thtext = th[0].text
 
                 if thtext.startswith('Term: '):
-                    (year, season) = thtext[5:].split()
+                    parts = thtext[5:].split()
+                    year = parts[0]
+                    season = ' '.join(parts[1:])
 
                     year = int(year[:4])
                     season = {
                         'Fall': 1,
                         'Winter': 2,
                         'Spring': 3,
+                        'Spring/Summer Sess. Part I': 4,
+                        'Spring/Summer Sess. Part II': 5,
                     }[season]
 
                     term = (year, season)
