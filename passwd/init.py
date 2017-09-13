@@ -34,13 +34,7 @@ def run(args, db):
     else:
         words = xkcd.locate_wordfile()
 
-    students = (
-            db.Student.select()
-                      .where(db.Student.pw_hash == None)
-                      .join(db.GroupMembership)
-                      .group_by(db.GroupMembership.student)
-                      .order_by(db.GroupMembership.group)
-    )
+    students = db.Student.select().where(db.Student.pw_hash == None)
 
     if args.all_students:
         instructors = []
