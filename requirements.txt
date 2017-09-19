@@ -1,0 +1,7 @@
+Jinja2>=2.9
+MechanicalSoup>=0.7
+PyYAML>=3.12
+passlib>=1.7
+peewee>=2.10
+pysqlite>=2.8
+xkcdpass>=1.12
