@@ -79,6 +79,7 @@ def run(args, db):
         credential = yaml.load(open(args.credential_file))
 
     else:
+        print("No '%s', prompting for user input" % args.credential_file)
         credential = {
             'username': raw_input('Username: '),
             'password': getpass.getpass(),
