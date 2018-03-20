@@ -39,17 +39,20 @@ def run(args, db):
 instructors = {instructors}
 tas = {tas}
 
-[/]
+[/{prefix}/]
 @instructors = rw
 @tas = r
 
-[/{ta_dir}]
+[/{prefix}/common]
+* = r
+
+[/{prefix}/TAs]
 @tas = rw
 
 '''.format(
         instructors = ','.join(i.username for i in instructors),
+        prefix = args.prefix,
         tas = ','.join(t.username for t in tas),
-        ta_dir = os.path.join(args.prefix, 'TAs')
     ))
 
     for (number, members) in groups.items():
