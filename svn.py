@@ -45,6 +45,7 @@ tas = {tas}
 
 [/{prefix}/common]
 * = r
+@tas = rw
 
 [/{prefix}/TAs]
 @tas = rw
