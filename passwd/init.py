@@ -67,7 +67,7 @@ def run(args, db):
 Username:       %s
 Password:       %s
 Lab group(s):   %s
-''' % (user.name, user.username, password,
+''' % (user.name(), user.username, password,
        ', '.join([ str(g.group_id) for g in user.groups ])))
 
         if not args.no_save:
