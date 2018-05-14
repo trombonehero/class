@@ -1,5 +1,6 @@
 #!/usr/bin/env python2.7
 
+import add
 import argparse
 import banner
 import config
@@ -18,6 +19,9 @@ args.add_argument('--db', help = 'database URL', default = config.database)
 subparsers = args.add_subparsers(dest = 'command')
 
 init = subparsers.add_parser('init', help = 'initialize class database')
+
+add.setup_argparse(
+        subparsers.add_parser('add', help = 'add student(s) manually'))
 
 banner.setup_argparse(
         subparsers.add_parser('banner', help = 'interact directly with Banner'))
