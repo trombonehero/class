@@ -4,6 +4,7 @@ import sys
 
 formatters = {
     'email': lambda s: '%20s' % s.email(),
+    'fullmail': lambda s: '%s <%s>' % (s.name(), s.email()),
     'group': lambda s: (
         'Group %-2d' % s.group().number if s.group() else '(no group)'
     ),
