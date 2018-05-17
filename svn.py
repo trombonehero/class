@@ -10,7 +10,7 @@ def setup_argparse(parser):
             help = 'directory to write SVN configuration files')
 
     parser.add_argument('-p', '--prefix', default = '',
-            help = 'prefix for all directory paths (e.g., a year)')
+            help = 'prefix for all SVN paths (e.g., reponame:/2018)')
 
 
 def run(args, db):
@@ -39,15 +39,15 @@ def run(args, db):
 instructors = {instructors}
 tas = {tas}
 
-[/{prefix}/]
+[{prefix}]
 @instructors = rw
 @tas = r
 
-[/{prefix}/common]
+[{prefix}/common]
 * = r
 @tas = rw
 
-[/{prefix}/TAs]
+[{prefix}/TAs]
 @tas = rw
 
 '''.format(
@@ -58,7 +58,7 @@ tas = {tas}
 
     for (number, members) in groups.items():
         path = os.path.join(args.prefix, 'groups', str(number))
-        authz.write('[/%s]\n' % path)
+        authz.write('[%s]\n' % path)
 
         for m in members:
             authz.write('%s = rw\n' % m)
@@ -67,7 +67,7 @@ tas = {tas}
 
     for s in students:
         path = os.path.join(args.prefix, 'students', s.username)
-        authz.write('[/%s]\n' % path)
+        authz.write('[%s]\n' % path)
         authz.write('%s = rw\n\n' % s.username)
 
 
