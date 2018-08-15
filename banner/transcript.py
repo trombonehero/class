@@ -65,7 +65,7 @@ def fetch_transcript(browser, urls, term, student_id):
             'TERM': term,
             'STUD_ID': student_id,
         })
-        if not result.ok: raise ValueError, result
+        if not result.ok: raise ValueError(result)
 
         #
         # The form that Banner returns here contains a challenge nonce,
@@ -82,24 +82,24 @@ def fetch_transcript(browser, urls, term, student_id):
         form.input({ 'sname': store_id })
 
         result = browser.submit(form, urls.map(display_transcript))
-        if not result.ok: raise ValueError, result
+        if not result.ok: raise ValueError(result)
 
         result = browser.get(urls.map(display_transcript))
-        if not result.ok: raise ValueError, result
+        if not result.ok: raise ValueError(result)
 
         result = browser.post(urls.map(view_transcript), {
             'tprt': 'OFFR',     # show transcript as of today
         })
-        if not result.ok: raise ValueError, result
+        if not result.ok: raise ValueError(result)
 
         try: return parse.transcript.parse(result.soup)
-        except ValueError, e:
+        except ValueError as e:
             exc_info = sys.exc_info()
             msg = str(e)
             raise banner.ParseError(msg, result.soup, exc_info)
 
 
-    except requests.exceptions.ConnectionError, e:
+    except requests.exceptions.ConnectionError as e:
         sys.stderr.write('Error: %s\n' % e.message)
         sys.exit(1)
 

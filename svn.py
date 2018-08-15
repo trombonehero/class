@@ -15,7 +15,7 @@ def setup_argparse(parser):
 
 def run(args, db):
     try: os.makedirs(args.outdir)
-    except OSError, e:
+    except OSError as e:
         if e.errno != errno.EEXIST:
             raise
 

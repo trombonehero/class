@@ -14,7 +14,7 @@ def run(args, browser, db, urls):
 
     try:
         result = browser.get(urls.map(banner.classlist.class_list))
-        if not result.ok: raise ValueError, result
+        if not result.ok: raise ValueError(result)
         soup = result.soup
 
         if len(soup.findAll(lambda i: i.name == 'loginform')) != 0:
@@ -41,7 +41,7 @@ def run(args, browser, db, urls):
         form.find('input', { 'name': 'p_crse' })['value'] = args.course_number
 
         result = browser.submit(form, urls.map(course_query))
-        if not result.ok: raise ValueError, result
+        if not result.ok: raise ValueError(result)
 
         tables = result.soup.findAll(lambda i: i.name == 'table' and
                                                'nowrap' in i.attrs)
@@ -66,7 +66,7 @@ def run(args, browser, db, urls):
             row = dict(zip(headers, ( col.text for col in row.select('td') )))
             courses.append(row)
 
-    except requests.exceptions.ConnectionError, e:
+    except requests.exceptions.ConnectionError as e:
         sys.stderr.write('Error: %s\n' % e.message)
         sys.exit(1)
 

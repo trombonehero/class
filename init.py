@@ -6,7 +6,7 @@ def run(args, db):
     try:
         db.setup()
 
-    except peewee.OperationalError, e:
+    except peewee.OperationalError as e:
         sys.stderr.write('Error: %s\n' % e)
         sys.exit(1)
 

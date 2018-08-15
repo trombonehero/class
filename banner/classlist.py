@@ -19,10 +19,10 @@ def run(args, browser, db, urls):
                 'p_crn': crn,
                 'p_ret_loc': class_list,
             })
-            if not result.ok: raise ValueError, result
+            if not result.ok: raise ValueError(result)
 
             result = browser.get(urls.map(class_list))
-            if not result.ok: raise ValueError, result
+            if not result.ok: raise ValueError(result)
 
             (course_info, students) = parse.classlist.parse(result.soup)
 
@@ -40,11 +40,11 @@ def run(args, browser, db, urls):
             print('')
 
 
-    except requests.exceptions.ConnectionError, e:
+    except requests.exceptions.ConnectionError as e:
         sys.stderr.write('Error: %s\n' % e.message)
         sys.exit(1)
 
-    except ValueError, e:
+    except ValueError as e:
         sys.stderr.write('Error: %s\n' % e)
         sys.exit(1)
 

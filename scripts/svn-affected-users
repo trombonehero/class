@@ -28,9 +28,9 @@ def email(username):
 for dirname in args.directory:
     if prefix:
         if not dirname.startswith(prefix):
-            raise ValueError, "Directory '%s' does not start with '%s'" % (
+            raise ValueError("Directory '%s' does not start with '%s'" % (
                     dirname, prefix
-                )
+                ))
 
         dirname = dirname[len(prefix):]
 

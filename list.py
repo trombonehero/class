@@ -26,7 +26,7 @@ sorters = {
 def setup_argparse(parser):
     parser.add_argument('--filter', help = 'SQL filter to apply')
 
-    parser.add_argument('--sort-by', default = sorters.keys()[0],
+    parser.add_argument('--sort-by', default = list(sorters.keys())[0],
         help = 'how to sort students (%s)' % ' | '.join(sorters.keys()))
 
     parser.add_argument('--reverse', action = 'store_true',

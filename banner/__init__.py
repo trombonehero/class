@@ -89,11 +89,11 @@ def run(args, db):
         browser = login(credential, urls, args.ca_bundle)
         browser.set_term(args.term)
 
-    except requests.exceptions.ConnectionError, e:
+    except requests.exceptions.ConnectionError as e:
         sys.stderr.write('Error: %s\n' % e.message)
         return
 
-    except ValueError, e:
+    except ValueError as e:
         sys.stderr.write('Error: %s\n' % e)
         return
 
@@ -114,7 +114,7 @@ def login(credential, urls, ca_bundle):
         'PIN': credential['password'],
     })
 
-    if not result.ok: raise ValueError, result
+    if not result.ok: raise ValueError(result)
 
     import types
     browser.ca_bundle = ca_bundle
@@ -138,6 +138,6 @@ def set_term(browser, term):
 
     result = browser.post(browser.urls.map(term_set), { 'term': term })
 
-    if not result.ok: raise ValueError, result
+    if not result.ok: raise ValueError(result)
 
     return result
