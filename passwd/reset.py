@@ -13,18 +13,14 @@ def setup_argparse(parser):
             help = "don't save: test password initialization")
 
     parser.add_argument('-w', '--wordfile',
-            help = 'file containing source words')
+            help = 'file containing source words',
+            default = xkcd.locate_wordfile())
 
     parser.add_argument('username', nargs = '+',
             help = 'users to reset passwords for')
 
 
 def run(args, db):
-    if args.wordfile:
-        words = xkcd.generate_wordlist(args.wordfile)
-    else:
-        words = xkcd.locate_wordfile()
-
     usernames = args.username
     users = itertools.chain(
             db.Student.select().where(db.Student.username << usernames),
@@ -35,6 +31,7 @@ def run(args, db):
     # in the proper Apache htpasswd format
     htpasswd = passlib.apache.HtpasswdFile()
 
+    words = xkcd.generate_wordlist(args.wordfile)
     for user in users:
         password = xkcd.generate_xkcdpassword(words, int(args.length))
         htpasswd.set_password(user.username, password)
