@@ -91,7 +91,7 @@ def run(args, db):
         browser.set_term(args.term)
 
     except requests.exceptions.ConnectionError as e:
-        sys.stderr.write('Error: %s\n' % e.message)
+        sys.stderr.write('Error: %s\n' % e)
         return
 
     except ValueError as e:
