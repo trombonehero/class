@@ -14,41 +14,45 @@ def run(args, browser, db, urls):
 
     try:
         browser.log.debug('Checking for existing login: %s' %
-            urls.map(banner.classlist.class_list))
+                          urls.map(banner.classlist.class_list))
         result = browser.get(urls.map(banner.classlist.class_list))
-        if not result.ok: raise ValueError(result)
+        if not result.ok:
+            raise ValueError(result)
         soup = result.soup
 
         if len(soup.findAll(lambda i: i.name == 'loginform')) != 0:
             raise 'Login failure'
 
         forms = soup.findAll(lambda i: i.name == 'form' and
-                                       i['action'].endswith('CRNQueryResults'))
+                             i['action'].endswith('CRNQueryResults'))
 
         if len(forms) != 1:
             message = 'unable to parse CRNQueryResults from page: '
 
-            if len(forms) == 0: message += 'no such form'
-            else: message += 'too many forms'
+            if len(forms) == 0:
+                message += 'no such form'
+            else:
+                message += 'too many forms'
 
             raise banner.ParseError(message, soup)
 
         (form,) = forms
 
-        form.find('input', { 'name': 'p_term' })['value'] = args.term
+        form.find('input', {'name': 'p_term'})['value'] = args.term
 
-        subject = form.find('select', { 'name': 'p_subj' })
-        subject.find('option', { 'value': args.subject })['selected'] = True
+        subject = form.find('select', {'name': 'p_subj'})
+        subject.find('option', {'value': args.subject})['selected'] = True
 
-        form.find('input', { 'name': 'p_crse' })['value'] = args.course_number
+        form.find('input', {'name': 'p_crse'})['value'] = args.course_number
 
         browser.log.info('Querying for %s %s @ %s' %
-            (args.term, args.course_number, urls.map(course_query)))
+                         (args.term, args.course_number, course_query))
         result = browser.submit(form, urls.map(course_query))
-        if not result.ok: raise ValueError(result)
+        if not result.ok:
+            raise ValueError(result)
 
         tables = result.soup.findAll(lambda i: i.name == 'table' and
-                                               'nowrap' in i.attrs)
+                                     'nowrap' in i.attrs)
 
         if len(tables) == 0:
             sys.stderr.write('No instances of %s %s found in term %s\n' % (
@@ -58,7 +62,7 @@ def run(args, browser, db, urls):
 
         (table,) = tables
         rows = table.select('tr')
-        headers = [ col.text for col in rows[1].select('th') ]
+        headers = [col.text for col in rows[1].select('th')]
 
         for i in range(5, 8):
             headers[i] = headers[i] + ' Enrollment'
@@ -67,13 +71,12 @@ def run(args, browser, db, urls):
             headers[i] = headers[i] + ' Waitlist'
 
         for row in table.select('tr')[2:]:
-            row = dict(zip(headers, ( col.text for col in row.select('td') )))
+            row = dict(zip(headers, (col.text for col in row.select('td'))))
             courses.append(row)
 
     except requests.exceptions.ConnectionError as e:
         sys.stderr.write('Error: %s\n' % e.message)
         sys.exit(1)
-
 
     print('Found %s course %s:' % (
         humanize.apnumber(len(courses)),

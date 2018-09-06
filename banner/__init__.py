@@ -10,7 +10,7 @@ import traceback
 
 
 class ParseError(BaseException):
-    def __init__(self, message, soup, cause = None):
+    def __init__(self, message, soup, cause=None):
         """
         message: a user-readable string
         soup: the BeautifulSoup object for the complete web page
@@ -34,34 +34,35 @@ class ParseError(BaseException):
             traceback.print_exception(*self.cause)
 
         return 'ParseError: %s (see contents of %s)' % (
-                self.message, self.filename)
+            self.message, self.filename)
 
 
 def setup_argparse(parser):
-    parser.add_argument('--banner-root', default = config.banner_root,
-            help = 'Root URL for all Banner requests')
-    parser.add_argument('--ca-bundle', default = False,
-            help = 'path to CA certificate bundle')
-    parser.add_argument('--credential-file', default = config.credential_file,
-            help = 'username/password file (YAML format)')
-    parser.add_argument('--term', default = config.term,
-            help = 'e.g., Fall 2016: 201601 [default: %s]' % config.term)
+    parser.add_argument('--banner-root', default=config.banner_root,
+                        help='Root URL for all Banner requests')
+    parser.add_argument('--ca-bundle', default=False,
+                        help='path to CA certificate bundle')
+    parser.add_argument('--credential-file', default=config.credential_file,
+                        help='username/password file (YAML format)')
+    parser.add_argument('--term', default=config.term,
+                        help='e.g., Fall 2016: 201601 [default: %s]' %
+                        config.term)
 
-    subparsers = parser.add_subparsers(dest = 'banner_command')
+    subparsers = parser.add_subparsers(dest='banner_command')
 
-    crn = subparsers.add_parser('crn', help = 'find course CRN from Banner')
-    crn.add_argument('subject', help = 'academic subject (e.g., ENGI)')
-    crn.add_argument('course_number', help = 'course number (e.g., 3891)')
+    crn = subparsers.add_parser('crn', help='find course CRN from Banner')
+    crn.add_argument('subject', help='academic subject (e.g., ENGI)')
+    crn.add_argument('course_number', help='course number (e.g., 3891)')
 
-    classlist = subparsers.add_parser('classlist', help = 'fetch class list')
-    classlist.add_argument('crn', help = 'Course Registration Number',
-            nargs = '+')
+    classlist = subparsers.add_parser('classlist', help='fetch class list')
+    classlist.add_argument('crn', help='Course Registration Number',
+                           nargs='+')
 
-    transcript = subparsers.add_parser('transcript', help = 'fetch transcript')
-    transcript.add_argument('--all', '-a', action = 'store_true',
-            help = "fetch entire class' transcripts")
-    transcript.add_argument('id', nargs = '?',
-            help = "individual student's ID (fetch only one transcript)")
+    transcript = subparsers.add_parser('transcript', help='fetch transcript')
+    transcript.add_argument('--all', '-a', action='store_true',
+                            help="fetch entire class' transcripts")
+    transcript.add_argument('id', nargs='?',
+                            help="fetch only this student's transcript")
 
 
 class urlmapper:
@@ -98,7 +99,6 @@ def run(args, db):
         sys.stderr.write('Error: %s\n' % e)
         return
 
-
     command = 'banner.' + args.banner_command
     importlib.import_module(command).run(args, browser, db, urls)
 
@@ -111,13 +111,14 @@ def login(credential, urls, ca_bundle):
     browser.log = logging.getLogger()
 
     browser.log.info('Logging in via %s' % urls.map(login_prompt))
-    browser.get(urls.map(login_prompt), verify = ca_bundle)
+    browser.get(urls.map(login_prompt), verify=ca_bundle)
     result = browser.post(urls.map(login_verify), {
         'sid': credential['username'],
         'PIN': credential['password'],
     })
 
-    if not result.ok: raise ValueError(result)
+    if not result.ok:
+        raise ValueError(result)
 
     import types
     browser.ca_bundle = ca_bundle
@@ -140,8 +141,9 @@ def set_term(browser, term):
     term_set = 'bwlkostm.P_FacStoreTerm2'
 
     browser.log.debug('Setting term to %s @ %s' % (term, urls.map(verify_id)))
-    result = browser.post(browser.urls.map(term_set), { 'term': term })
+    result = browser.post(browser.urls.map(term_set), {'term': term})
 
-    if not result.ok: raise ValueError(result)
+    if not result.ok:
+        raise ValueError(result)
 
     return result

@@ -17,9 +17,9 @@ db = providers[provider](database)
 
 
 class Instructor(Model):
-    username = CharField(unique = True, index = True)
+    username = CharField(unique=True, index=True)
     name = TextField()
-    pw_hash = TextField(null = True)
+    pw_hash = TextField(null=True)
     ta = BooleanField()
     groups = set()
 
@@ -40,14 +40,14 @@ class Instructor(Model):
 
 
 class Student(Model):
-    username = CharField(unique = True, index = True)
-    student_id = IntegerField(unique = True, primary_key = True)
+    username = CharField(unique=True, index=True)
+    student_id = IntegerField(unique=True, primary_key=True)
     forename = TextField()
-    initial = FixedCharField(null = True)
+    initial = FixedCharField(null=True)
     surname = TextField()
-    pw_hash = TextField(null = True)
-    graduate_student = BooleanField(default = False)
-    transcript_fetched = DateTimeField(null = True)
+    pw_hash = TextField(null=True)
+    graduate_student = BooleanField(default=False)
+    transcript_fetched = DateTimeField(null=True)
 
     class Meta:
         database = db
@@ -57,8 +57,8 @@ class Student(Model):
 
     def group(self):
         # TODO: figure out why .desc() doesn't do what we want it to do
-        groups = sorted(self.groups, key = lambda g: g.group_id,
-                reverse = True)
+        groups = sorted(self.groups, key=lambda g: g.group_id,
+                        reverse=True)
 
         if len(groups) == 0:
             return None
@@ -80,7 +80,7 @@ class LabGroup(Model):
     number = PrimaryKeyField()
 
     def __str__(self):
-        members = [ m.student.name() for m in self.memberships ]
+        members = [m.student.name() for m in self.memberships]
         return 'Group %d (%s)' % (self.number, ', '.join(members))
 
     class Meta:
@@ -88,8 +88,8 @@ class LabGroup(Model):
 
 
 class GroupMembership(Model):
-    group = ForeignKeyField(LabGroup, related_name = 'memberships')
-    student = ForeignKeyField(Student, related_name = 'groups')
+    group = ForeignKeyField(LabGroup, related_name='memberships')
+    student = ForeignKeyField(Student, related_name='groups')
 
     def __str__(self):
         return '%s: group %d' % (str(self.student), self.group.number)
@@ -104,13 +104,13 @@ class GroupMembership(Model):
 
 
 class TranscriptEntry(Model):
-    student = ForeignKeyField(Student, related_name = 'courses')
+    student = ForeignKeyField(Student, related_name='courses')
     year = IntegerField()
     term = IntegerField()
     subject = FixedCharField(4)
     code = FixedCharField(4)
     result = FixedCharField(4)
-    mark = IntegerField(null = True)
+    mark = IntegerField(null=True)
 
     class Meta:
         database = db
@@ -119,8 +119,10 @@ class TranscriptEntry(Model):
 def close():
     db.close()
 
+
 def connect():
     db.connect()
+
 
 def setup():
     db.create_tables([

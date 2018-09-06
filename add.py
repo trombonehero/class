@@ -32,4 +32,3 @@ def prompt(msg):
         s = input('%-24s' % (msg + ':'))
         if len(s) > 0:
             return s
-

@@ -28,14 +28,13 @@ def run(args, browser, db, urls):
         parse.transcript.print_courses(courses)
 
         try:
-            student = db.Student.get(student_id = formatted_id)
+            student = db.Student.get(student_id=formatted_id)
             save(db, student, courses)
 
         except peewee.DoesNotExist:
             sys.stderr.write('\n%s (%s) not a student in this database\n' % (
                 name, args.id))
             sys.exit(1)
-
 
     else:
         students = (
@@ -67,7 +66,8 @@ def fetch_transcript(browser, urls, term, student_id):
             'TERM': term,
             'STUD_ID': student_id,
         })
-        if not result.ok: raise ValueError(result)
+        if not result.ok:
+            raise ValueError(result)
 
         #
         # The form that Banner returns here contains a challenge nonce,
@@ -77,32 +77,36 @@ def fetch_transcript(browser, urls, term, student_id):
                                     tag['action'].endswith(store_id))
 
         if len(forms) == 0:
-            sys.stderr.write('no verification form found for %s\n' % student_id)
+            sys.stderr.write(
+                'no verification form found for %s\n' % student_id)
             return (None, None)
 
         (form,) = forms
-        form.input({ 'sname': store_id })
+        form.input({'sname': store_id})
 
         browser.log.debug('Requesting transcript: %s' % urls.map(verify_id))
         result = browser.submit(form, urls.map(display_transcript))
-        if not result.ok: raise ValueError(result)
+        if not result.ok:
+            raise ValueError(result)
 
         browser.log.debug('Displaying transcript: %s' % urls.map(verify_id))
         result = browser.get(urls.map(display_transcript))
-        if not result.ok: raise ValueError(result)
+        if not result.ok:
+            raise ValueError(result)
 
         browser.log.debug('"Viewing" transcript: %s' % urls.map(verify_id))
         result = browser.post(urls.map(view_transcript), {
             'tprt': 'OFFR',     # show transcript as of today
         })
-        if not result.ok: raise ValueError(result)
+        if not result.ok:
+            raise ValueError(result)
 
-        try: return parse.transcript.parse(result.soup)
+        try:
+            return parse.transcript.parse(result.soup)
         except ValueError as e:
             exc_info = sys.exc_info()
             msg = str(e)
             raise banner.ParseError(msg, result.soup, exc_info)
-
 
     except requests.exceptions.ConnectionError as e:
         sys.stderr.write('Error: %s\n' % e.message)
@@ -116,12 +120,14 @@ def save(db, student, courses):
         ((year, term), subject, code, title, grade) = course
 
         e, created = db.TranscriptEntry.get_or_create(
-                student = student, year = year, term = term,
-                subject = subject, code = code,
-                defaults = { 'result': grade })
+            student=student, year=year, term=term,
+            subject=subject, code=code,
+            defaults={'result': grade})
 
-        try: e.mark = int(grade)
-        except ValueError: pass
+        try:
+            e.mark = int(grade)
+        except ValueError:
+            pass
 
         e.save()
 

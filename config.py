@@ -16,4 +16,3 @@ database = 'sqlite://class.db'
 today = datetime.date.today()
 term = ((today.month - 9) % 12) / 4 + 1
 term = '%04d%02d' % (today.year - term / 2, term)
-
