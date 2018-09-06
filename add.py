@@ -3,8 +3,6 @@ def setup_argparse(parser):
 
 
 def run(args, db):
-    print(args)
-
     try:
         while True:
             add_user(db)
@@ -22,7 +20,7 @@ def add_user(db):
     s.surname = prompt('Surname')
     s.graduate_student = prompt('Graduate student [y/N]').lower() == 'y'
 
-    # Since Student has a custom primary key (the student ID), we need 
+    # Since Student has a custom primary key (the student ID), we need
     # to force the use of INSERT on our first call to save()
     s.save(force_insert=True)
 
