@@ -14,6 +14,7 @@ def run(args, browser, db, urls):
         for crn in args.crn:
             print('Fetching classlist for CRN %s' % crn)
 
+            browser.log.debug('Setting CRN %s: %s' % (crn, urls.map(set_crn)))
             result = browser.post(urls.map(set_crn), {
                 'p_term': args.term,
                 'p_crn': crn,
@@ -21,6 +22,7 @@ def run(args, browser, db, urls):
             })
             if not result.ok: raise ValueError(result)
 
+            browser.log.debug('Fetching class list: %s' % urls.map(class_list))
             result = browser.get(urls.map(class_list))
             if not result.ok: raise ValueError(result)
 

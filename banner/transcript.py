@@ -60,7 +60,9 @@ def run(args, browser, db, urls):
 
 
 def fetch_transcript(browser, urls, term, student_id):
+    browser.log.info('Fetching transcript for %s' % student_id)
     try:
+        browser.log.debug('Requesting %s' % urls.map(verify_id))
         result = browser.post(urls.map(verify_id), {
             'TERM': term,
             'STUD_ID': student_id,
@@ -81,12 +83,15 @@ def fetch_transcript(browser, urls, term, student_id):
         (form,) = forms
         form.input({ 'sname': store_id })
 
+        browser.log.debug('Requesting transcript: %s' % urls.map(verify_id))
         result = browser.submit(form, urls.map(display_transcript))
         if not result.ok: raise ValueError(result)
 
+        browser.log.debug('Displaying transcript: %s' % urls.map(verify_id))
         result = browser.get(urls.map(display_transcript))
         if not result.ok: raise ValueError(result)
 
+        browser.log.debug('"Viewing" transcript: %s' % urls.map(verify_id))
         result = browser.post(urls.map(view_transcript), {
             'tprt': 'OFFR',     # show transcript as of today
         })

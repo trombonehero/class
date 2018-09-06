@@ -1,6 +1,7 @@
 import config
 import getpass
 import importlib
+import logging
 import mechanicalsoup
 import os
 import requests
@@ -107,7 +108,9 @@ def login(credential, urls, ca_bundle):
     login_verify = 'twbkwbis.P_ValLogin'
 
     browser = mechanicalsoup.Browser(soup_config={'features': 'html.parser'})
+    browser.log = logging.getLogger()
 
+    browser.log.info('Logging in via %s' % urls.map(login_prompt))
     browser.get(urls.map(login_prompt), verify = ca_bundle)
     result = browser.post(urls.map(login_verify), {
         'sid': credential['username'],
@@ -136,6 +139,7 @@ def set_term(browser, term):
 
     term_set = 'bwlkostm.P_FacStoreTerm2'
 
+    browser.log.debug('Setting term to %s @ %s' % (term, urls.map(verify_id)))
     result = browser.post(browser.urls.map(term_set), { 'term': term })
 
     if not result.ok: raise ValueError(result)

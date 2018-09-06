@@ -13,6 +13,8 @@ def run(args, browser, db, urls):
     courses = []
 
     try:
+        browser.log.debug('Checking for existing login: %s' %
+            urls.map(banner.classlist.class_list))
         result = browser.get(urls.map(banner.classlist.class_list))
         if not result.ok: raise ValueError(result)
         soup = result.soup
@@ -40,6 +42,8 @@ def run(args, browser, db, urls):
 
         form.find('input', { 'name': 'p_crse' })['value'] = args.course_number
 
+        browser.log.info('Querying for %s %s @ %s' %
+            (args.term, args.course_number, urls.map(course_query)))
         result = browser.submit(form, urls.map(course_query))
         if not result.ok: raise ValueError(result)
 
