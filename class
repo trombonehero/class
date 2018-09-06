@@ -6,11 +6,14 @@ import banner
 import config
 import group
 import importlib
+import logging
 import mail
 import parse
 import passwd
 import plot
 import svn
+
+logging.basicConfig(format='[%(levelname)s]\t%(message)s', level=logging.INFO)
 
 
 args = argparse.ArgumentParser()
