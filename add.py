@@ -31,7 +31,7 @@ def add_user(db):
 
 def prompt(msg):
     while True:
-        s = raw_input('%-24s' % (msg + ':'))
+        s = input('%-24s' % (msg + ':'))
         if len(s) > 0:
             return s
 
