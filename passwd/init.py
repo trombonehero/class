@@ -18,7 +18,8 @@ def setup_argparse(parser):
             help = "don't save: test password initialization")
 
     parser.add_argument('-w', '--wordfile',
-            help = 'file containing source words')
+            help = 'file containing source words',
+            default = xkcd.locate_wordfile())
 
     parser.add_argument('username', nargs = '*',
             help = 'users to create passwords for')
@@ -29,11 +30,7 @@ def run(args, db):
         sys.stderr.write('Must specify usernames or --all-students\n')
         sys.exit(1)
 
-    if args.wordfile:
-        words = xkcd.generate_wordlist(args.wordfile)
-    else:
-        words = xkcd.locate_wordfile()
-
+    words = xkcd.generate_wordlist(args.wordfile)
     students = db.Student.select().where(db.Student.pw_hash == None)
 
     if args.all_students:
