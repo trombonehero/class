@@ -100,10 +100,10 @@ def parse(soup):
 
         columns = {
             k: converters[k](v) for (k,v) in 
-            zip(
+            list(zip(
                 [ 'name', 'id', 'status', 'degree', 'credit_hours', 'grade', 'email' ],
                 columns[1:]
-            )
+            ))
         }
 
         students.append(columns)

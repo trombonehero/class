@@ -83,7 +83,7 @@ def run(args, db):
     else:
         print("No '%s', prompting for user input" % args.credential_file)
         credential = {
-            'username': raw_input('Username: '),
+            'username': input('Username: '),
             'password': getpass.getpass(),
         }
 

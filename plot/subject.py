@@ -20,7 +20,7 @@ def run(args, db):
     fig, axes = plt.subplots(ncols = len(data))
     plt.title('Marks in all %s courses' % args.subject)
 
-    items = sorted(data.items(), key = lambda (c,m): c)
+    items = sorted(data.items(), key = lambda c_m: c_m[0])
     for i, (course, marks) in enumerate(items):
         axes[i].boxplot(marks)
         axes[i].set_ylim([ 0, 100 ])
