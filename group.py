@@ -1,4 +1,3 @@
-import itertools
 import peewee
 import sys
 
@@ -27,7 +26,7 @@ def create_group(students, db):
     sys.stdout.write('%4d  ' % g.number)
 
     for s in students:
-        sys.stdout.write('  %12s %-20s' % (s.username, s.name()))
+        sys.stdout.write('  %12s %-20s' % (s.username, s.name))
         db.GroupMembership.create(group = g, student = s)
 
     sys.stdout.write('\n')
@@ -63,4 +62,4 @@ def group_remainder(db):
 # Organize students into groups.
 def group(students, size = 2):
     args = [ iter(list(students)) ] * size
-    return itertools.izip(*args)
+    return zip(*args)
