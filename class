@@ -13,11 +13,11 @@ import passwd
 import plot
 import svn
 
-logging.basicConfig(format='[%(levelname)s]\t%(message)s', level=logging.INFO)
-
 
 args = argparse.ArgumentParser()
 args.add_argument('--db', help = 'database URL', default = config.database)
+args.add_argument('-v', '--verbose', help = 'log additional information',
+                  action='store_true')
 
 subparsers = args.add_subparsers(dest = 'command')
 
@@ -50,6 +50,10 @@ plotsub = subparsers.add_parser('plot', help = 'plot statistics')
 plot.setup_argparse(plotsub)
 
 args = args.parse_args()
+
+
+logging.basicConfig(format='[%(levelname)s]\t%(message)s',
+                    level=logging.DEBUG if args.verbose else logging.INFO)
 
 # Set database URL and open the connection:
 setattr(config, 'database', args.db)
