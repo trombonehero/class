@@ -21,7 +21,7 @@ def run(args, browser, db, urls):
         soup = result.soup
 
         if len(soup.findAll(lambda i: i.name == 'loginform')) != 0:
-            raise 'Login failure'
+            raise banner.LoginError()
 
         forms = soup.findAll(lambda i: i.name == 'form' and
                              i['action'].endswith('CRNQueryResults'))
