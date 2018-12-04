@@ -11,7 +11,9 @@ def run(args, db):
         (info, students) = parse(soup)
 
         if not course_info: course_info = info
-        assert course_info == info
+        if course_info != info:
+            raise ValueError('mismatched course info: %s vs %s' %
+                             (course_info, info))
 
         student_details += students
 
