@@ -89,7 +89,7 @@ def run(args, db):
 
     try:
         browser = login(credential, urls, args.ca_bundle)
-        browser.set_term(args.term)
+        browser.set_term(args.term, urls)
 
     except requests.exceptions.ConnectionError as e:
         sys.stderr.write('Error: %s\n' % e)
@@ -128,7 +128,7 @@ def login(credential, urls, ca_bundle):
     return browser
 
 
-def set_term(browser, term):
+def set_term(browser, term, urls):
     """
     Set the term (e.g., Fall 2016) on the current browser session.
 
@@ -140,7 +140,7 @@ def set_term(browser, term):
 
     term_set = 'bwlkostm.P_FacStoreTerm2'
 
-    browser.log.debug('Setting term to %s @ %s' % (term, urls.map(verify_id)))
+    browser.log.debug('Setting term to %s @ %s' % (term, urls.map(term_set)))
     result = browser.post(browser.urls.map(term_set), {'term': term})
 
     if not result.ok:
