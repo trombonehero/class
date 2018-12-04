@@ -20,7 +20,7 @@ def run(args, browser, db, urls):
             raise ValueError(result)
         soup = result.soup
 
-        if len(soup.findAll(lambda i: i.name == 'loginform')) != 0:
+        if soup.find('form', {'name': 'loginform'}):
             raise banner.LoginError()
 
         forms = soup.findAll(lambda i: i.name == 'form' and
