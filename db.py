@@ -65,6 +65,7 @@ class Student(Model):
         else:
             return groups[0].group
 
+    # TODO: stop trying to separate forenames from surnames, just use `name`
     def name(self):
         return '%s %s' % (self.forename, self.surname)
 
