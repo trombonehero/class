@@ -1,14 +1,29 @@
 def setup_argparse(parser):
-    pass
+    parser.add_argument('--instructor', action='store_true')
 
 
 def run(args, db):
+    if args.instructor:
+        add_instructor(db)
+        return
+
     try:
         while True:
             add_student(db)
 
     except EOFError:
         return
+
+
+def add_instructor(db):
+    username = prompt('Username')
+    inst = db.Instructor(username=username)
+
+    inst.name = prompt('Name')
+    inst.ta = prompt('TA [y/N]').lower() == 'y'
+    inst.save(force_insert=True)
+
+    print('Added %s' % inst)
 
 
 def add_student(db):
