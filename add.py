@@ -5,13 +5,13 @@ def setup_argparse(parser):
 def run(args, db):
     try:
         while True:
-            add_user(db)
+            add_student(db)
 
     except EOFError:
         return
 
 
-def add_user(db):
+def add_student(db):
     student_id = prompt('Student ID')
     s = db.Student(student_id=student_id)
 
