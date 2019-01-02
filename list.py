@@ -24,6 +24,9 @@ sorters = {
 
 
 def setup_argparse(parser):
+    parser.add_argument('--csv', action = 'store_true',
+        help = 'Output data in CSV format')
+
     parser.add_argument('--filter', help = 'SQL filter to apply')
 
     parser.add_argument('--sort-by', default = list(sorters.keys())[0],
@@ -60,13 +63,26 @@ def run(args, db):
     if args.reverse:
         sorter = sorter.desc()
 
+    if args.csv:
+        print(', '.join([ '%s' % key for key in args.details ]))
+
     for s in students.order_by(sorter):
-        print_details(s, f)
+        print_details(s, f, args.csv)
 
 
-def print_details(student, formatters):
+def print_details(student, formatters, csv = False):
+    line = []
+
     for f in formatters:
-        sys.stdout.write(f(student))
-        sys.stdout.write(' ')
+        s = f(student)
 
+        if csv:
+            s = s.strip()
+            if ' ' in s:
+                s = '"%s"' % s
+
+        line.append(s)
+
+    separator = ', ' if csv else ' '
+    sys.stdout.write(separator.join(line))
     sys.stdout.write('\n')
