@@ -46,6 +46,11 @@ def run(args, db):
                              .where(db.Instructor.username << usernames)
         )
 
+        matches = [u.username for u in itertools.chain(instructors, students)]
+        unmatched = set(usernames).difference(matches)
+        if len(unmatched) > 0:
+            sys.stderr.write(f'Invalid usernames: {" ".join(unmatched)}\n')
+
     if args.filter:
         students = students.where(db.SQL(args.filter))
 
