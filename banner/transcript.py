@@ -45,7 +45,7 @@ def run(args, browser, db, urls):
         print('Retrieving %d transcripts:' % students.count())
 
         for s in students:
-            sys.stdout.write('%9s %-30s  ' % (s.student_id, s.name()))
+            sys.stdout.write('%9s %-30s  ' % (s.student_id, s.name))
 
             formatted_id = '{0:09d}'.format(s.student_id)
             (_, courses) = fetch_transcript(browser, urls, term, formatted_id)

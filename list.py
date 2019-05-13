@@ -64,7 +64,7 @@ def run(args, db):
         sorter = sorter.desc()
 
     if args.csv:
-        print(', '.join([ '%s' % key for key in args.details ]))
+        print(','.join([ '%s' % key for key in args.details ]))
 
     for s in students.order_by(sorter):
         print_details(s, f, args.csv)
@@ -83,6 +83,6 @@ def print_details(student, formatters, csv = False):
 
         line.append(s)
 
-    separator = ', ' if csv else ' '
+    separator = ',' if csv else ' '
     sys.stdout.write(separator.join(line))
     sys.stdout.write('\n')
