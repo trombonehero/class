@@ -9,8 +9,11 @@ def setup_argparse(parser):
     parser.add_argument('-o', '--outdir', metavar = 'DIR', default = '.',
             help = 'directory to write SVN configuration files')
 
+    parser.add_argument('-r', '--repo', required = True,
+            help = 'repository name (e.g., engi4892)')
+
     parser.add_argument('-p', '--prefix', default = '',
-            help = 'prefix for all SVN paths (e.g., reponame:/2018)')
+            help = 'prefix for SVN paths in the repo (e.g., 2018-19W)')
 
 
 def run(args, db):
@@ -39,27 +42,31 @@ def run(args, db):
 instructors = {instructors}
 tas = {tas}
 
-[{prefix}]
+[{repo}:/]
+@instructors = rw
+
+[{repo}:/{prefix}]
 @instructors = rw
 @tas = r
 
-[{prefix}/common]
+[{repo}:/{prefix}/common]
 * = r
 @instructors = rw
 @tas = rw
 
-[{prefix}/TAs]
+[{repo}:/{prefix}/TAs]
 @tas = rw
 
 '''.format(
         instructors = ','.join(i.username for i in instructors),
         prefix = args.prefix,
+        repo = args.repo,
         tas = ','.join(t.username for t in tas),
     ))
 
     for (number, members) in groups.items():
         path = os.path.join(args.prefix, 'groups', str(number))
-        authz.write('[%s]\n' % path)
+        authz.write('[%s:/%s]\n' % (args.repo, path))
 
         for m in members:
             authz.write('%s = rw\n' % m)
@@ -68,7 +75,7 @@ tas = {tas}
 
     for s in students:
         path = os.path.join(args.prefix, 'students', s.username)
-        authz.write('[%s]\n' % path)
+        authz.write('[%s:/%s]\n' % (args.repo, path))
         authz.write('%s = rw\n\n' % s.username)
 
 
