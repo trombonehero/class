@@ -37,10 +37,13 @@ def run(args, db):
 
     authz = open(os.path.join(args.outdir, 'authz'), 'w')
 
-    authz.write('''
+    repo = args.repo
+    prefix = args.prefix
+
+    authz.write(f'''
 [groups]
-instructors = {instructors}
-tas = {tas}
+instructors = {','.join(i.username for i in instructors)}
+tas = {','.join(t.username for t in tas)}
 
 [{repo}:/]
 @instructors = rw
@@ -57,26 +60,20 @@ tas = {tas}
 [{repo}:/{prefix}/TAs]
 @tas = rw
 
-'''.format(
-        instructors = ','.join(i.username for i in instructors),
-        prefix = args.prefix,
-        repo = args.repo,
-        tas = ','.join(t.username for t in tas),
-    ))
+''')
 
     for (number, members) in groups.items():
         path = os.path.join(args.prefix, 'groups', str(number))
-        authz.write('[%s:/%s]\n' % (args.repo, path))
+        authz.write(f'[{repo}:/{path}]\n')
 
         for m in members:
-            authz.write('%s = rw\n' % m)
+            authz.write(f'{m} = rw\n')
 
         authz.write('\n')
 
     for s in students:
-        path = os.path.join(args.prefix, 'students', s.username)
-        authz.write('[%s:/%s]\n' % (args.repo, path))
-        authz.write('%s = rw\n\n' % s.username)
+        authz.write(f'[{repo}:/{prefix}/students/{s.username}]\n')
+        authz.write(f'{s.username} = rw\n\n')
 
 
     print('Writing %d instructors, %d TAs and %d students to %s' % (
