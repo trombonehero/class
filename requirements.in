@@ -1,0 +1,17 @@
+beautifulsoup4
+certifi
+chardet
+humanize
+idna
+inflect
+Jinja2
+lxml
+MarkupSafe
+MechanicalSoup
+passlib
+peewee
+PyYAML
+requests
+six
+urllib3
+xkcdpass
