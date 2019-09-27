@@ -1,6 +1,8 @@
-from db import GroupMembership, LabGroup, Student
 import peewee
 import sys
+
+from . import db
+
 
 formatters = {
     'email': lambda s: '%20s' % s.email(),
@@ -15,11 +17,11 @@ formatters = {
 }
 
 sorters = {
-    'name': Student.forename,
-    'group': GroupMembership.id,
-    'id': Student.student_id,
-    'level': Student.graduate_student,
-    'username': Student.username,
+    'name': db.Student.forename,
+    'group': db.GroupMembership.id,
+    'id': db.Student.student_id,
+    'level': db.Student.graduate_student,
+    'username': db.Student.username,
 }
 
 
@@ -50,10 +52,10 @@ def run(args, db):
     f = [ formatters[key] for key in args.details ]
 
     students = (
-            Student.select()
-                   .join(GroupMembership, peewee.JOIN.LEFT_OUTER)
-                   .join(LabGroup, peewee.JOIN.LEFT_OUTER)
-                   .order_by(LabGroup.number)
+            db.Student.select()
+                      .join(db.GroupMembership, peewee.JOIN.LEFT_OUTER)
+                      .join(db.LabGroup, peewee.JOIN.LEFT_OUTER)
+                      .order_by(db.LabGroup.number)
     )
 
     if args.filter:

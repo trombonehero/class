@@ -1,4 +1,3 @@
-import config
 import getpass
 import importlib
 import logging
@@ -7,6 +6,8 @@ import os
 import requests
 import sys
 import traceback
+
+from .. import config
 
 
 class LoginError(BaseException):

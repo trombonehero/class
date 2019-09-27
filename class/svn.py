@@ -1,8 +1,9 @@
-import db
 import errno
 import itertools
 import json
 import os
+
+from . import db
 
 
 def setup_argparse(parser):

@@ -2,8 +2,9 @@
 
 import collections
 from datetime import date, datetime
-import config
 from peewee import *
+
+from . import config
 
 
 providers = {

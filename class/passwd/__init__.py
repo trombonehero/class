@@ -10,8 +10,8 @@ def setup_argparse(parser):
     }
 
     for (name, description) in subcommands.items():
-        importlib.import_module('passwd.' + name).setup_argparse(
-                subparsers.add_parser(name, help = description))
+        mod = importlib.import_module(f'.{name}', package='class.passwd')
+        mod.setup_argparse(subparsers.add_parser(name, help = description))
 
 
 def run(args, db):
