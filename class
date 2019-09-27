@@ -14,12 +14,12 @@ import plot
 import svn
 
 
-args = argparse.ArgumentParser()
-args.add_argument('--db', help = 'database URL', default = config.database)
-args.add_argument('-v', '--verbose', help = 'log additional information',
+argp = argparse.ArgumentParser()
+argp.add_argument('--db', help = 'database URL', default = config.database)
+argp.add_argument('-v', '--verbose', help = 'log additional information',
                   action='store_true')
 
-subparsers = args.add_subparsers(dest = 'command')
+subparsers = argp.add_subparsers(dest = 'command')
 
 init = subparsers.add_parser('init', help = 'initialize class database')
 
@@ -52,7 +52,7 @@ mail.setup_argparse(subparsers.add_parser('mail', help = 'send email to class'))
 plotsub = subparsers.add_parser('plot', help = 'plot statistics')
 plot.setup_argparse(plotsub)
 
-args = args.parse_args()
+args = argp.parse_args()
 
 
 logging.basicConfig(format='[%(levelname)s]\t%(message)s',
@@ -64,7 +64,13 @@ import db
 
 db.connect()
 
-# Import and execute the named command:
-importlib.import_module(args.command).run(args, db)
+if args.command:
+    # Import and execute the named command:
+    importlib.import_module(args.command).run(args, db)
+else:
+    argp.print_usage()
+
+    import sys
+    sys.exit(1)
 
 db.close()
