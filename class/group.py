@@ -25,7 +25,7 @@ def create_group(students, db):
     sys.stdout.write('%4d  ' % g.number)
 
     for s in students:
-        sys.stdout.write('  %12s %-20s' % (s.username, s.name))
+        sys.stdout.write('  %12s %-20s' % (s.username, s.name()))
         db.GroupMembership.create(group = g, student = s)
 
     sys.stdout.write('\n')
