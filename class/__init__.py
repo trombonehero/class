@@ -7,9 +7,14 @@ import importlib
 @click.group()
 @click.pass_context
 @click.option('-d', '--db', default='sqlite://class.db')
-def cli(ctx, db):
+@click.option('-v', '--verbose', is_flag=True, help='Enable verbose logging.')
+def cli(ctx, db, verbose):
     ctx.ensure_object(dict)
     ctx.obj['DATABASE_URL'] = db
+
+    import logging
+    logging.basicConfig(format='[%(levelname)s]\t%(message)s',
+                        level=logging.DEBUG if verbose else logging.INFO)
 
 
 @cli.command()
@@ -45,13 +50,9 @@ for name in ('add', 'group', 'list', 'mail', 'parse'):
 #def main():
 #    import argparse
 #    import importlib
-#    import logging
 #
 #
 #    argp = argparse.ArgumentParser()
-#    argp.add_argument('-v', '--verbose', help = 'log additional information',
-#                      action='store_true')
-#
 #    banner.setup_argparse(
 #            subparsers.add_parser('banner', help = 'interact directly with Banner'))
 #
@@ -65,10 +66,6 @@ for name in ('add', 'group', 'list', 'mail', 'parse'):
 #    plot.setup_argparse(plotsub)
 #
 #    args = argp.parse_args()
-#
-#
-#    logging.basicConfig(format='[%(levelname)s]\t%(message)s',
-#                        level=logging.DEBUG if args.verbose else logging.INFO)
 #
 #    # Set database URL and open the connection:
 #    setattr(config, 'database', args.db)
