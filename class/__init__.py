@@ -23,6 +23,7 @@ def cli(ctx, db):
     ctx.obj['DATABASE_URL'] = db
 
 
+cli.add_command(lst.cli)
 cli.add_command(parse.parse)
 
 
@@ -41,25 +42,6 @@ def init(ctx):
 
     except e:
         raise e
-
-
-@cli.command()
-@click.pass_context
-@click.option('--csv', help='output in CSV format', is_flag=True)
-@click.option('--filter', help='SQL filter to apply')
-@click.option('--sort-by', default='name',
-              help='how to sort students' +
-                   f' (any of: {", ".join(lst.sort_names())})')
-@click.option('--reverse', help='sort in reverse order', is_flag=True)
-@click.option('--details', default='username,id,name,email,group',
-              help='what to print about each student' +
-                   f' (comma-separated list of: {", ".join(lst.fmt_names())})')
-def list(ctx, csv, filter, sort_by, reverse, details):
-    """List students in the course."""
-
-    from . import db
-
-    lst.print_students(db, csv, filter, sort_by, reverse, details)
 
 
 #def main():

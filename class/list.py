@@ -1,3 +1,4 @@
+import click
 import peewee
 import sys
 
@@ -28,6 +29,25 @@ sorters = {
 
 def sort_names():
     return sorted(sorters.keys())
+
+
+@click.command('list')
+@click.pass_context
+@click.option('--csv', help='output in CSV format', is_flag=True)
+@click.option('--filter', help='SQL filter to apply')
+@click.option('--sort-by', default='name',
+              help='how to sort students' +
+                   f' (any of: {", ".join(sort_names())})')
+@click.option('--reverse', help='sort in reverse order', is_flag=True)
+@click.option('--details', default='username,id,name,email,group',
+              help='what to print about each student' +
+                   f' (comma-separated list of: {", ".join(fmt_names())})')
+def cli(ctx, csv, filter, sort_by, reverse, details):
+    """List students in the course."""
+
+    from . import db
+
+    print_students(db, csv, filter, sort_by, reverse, details)
 
 
 def print_students(db, csv, filter, sort_by, reverse, details):
