@@ -28,7 +28,9 @@ def init(ctx):
         raise e
 
 
-#from . import add
+from . import add
+cli.add_command(add.cli)
+
 #from . import banner
 #from . import config
 #from . import group
@@ -55,9 +57,6 @@ cli.add_command(parse.parse)
 #    argp = argparse.ArgumentParser()
 #    argp.add_argument('-v', '--verbose', help = 'log additional information',
 #                      action='store_true')
-#
-#    add.setup_argparse(
-#            subparsers.add_parser('add', help = 'add student(s) manually'))
 #
 #    banner.setup_argparse(
 #            subparsers.add_parser('banner', help = 'interact directly with Banner'))

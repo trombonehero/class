@@ -1,9 +1,16 @@
-def setup_argparse(parser):
-    parser.add_argument('--instructor', action='store_true')
+import click
 
 
-def run(args, db):
-    if args.instructor:
+@click.command('add')
+@click.option('--instructor', is_flag=True,
+              help='Is this person a TA or instructor (vs a student)?')
+@click.pass_context
+def cli(ctx, instructor):
+    """Add a student or instructor/TA to the class."""
+
+    from .. import db
+
+    if instructor:
         add_instructor(db)
         return
 
