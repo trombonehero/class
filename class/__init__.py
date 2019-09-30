@@ -1,19 +1,6 @@
 #!/usr/bin/env python3
 
 import click
-import sys
-
-#from . import add
-#from . import banner
-#from . import config
-#from . import group
-from . import list as lst
-#from . import mail
-from . import parse
-#from . import passwd
-#from . import plot
-#from . import svn
-
 
 @click.group()
 @click.pass_context
@@ -21,10 +8,6 @@ from . import parse
 def cli(ctx, db):
     ctx.ensure_object(dict)
     ctx.obj['DATABASE_URL'] = db
-
-
-cli.add_command(lst.cli)
-cli.add_command(parse.parse)
 
 
 @cli.command()
@@ -37,11 +20,30 @@ def init(ctx):
         db.setup()
 
     except Exception as e:
+        import sys
         sys.stderr.write('Error: %s\n' % e)
         sys.exit(1)
 
     except e:
         raise e
+
+
+#from . import add
+#from . import banner
+#from . import config
+#from . import group
+
+from . import list as lst
+cli.add_command(lst.cli)
+
+#from . import mail
+
+from . import parse
+cli.add_command(parse.parse)
+
+#from . import passwd
+#from . import plot
+#from . import svn
 
 
 #def main():
