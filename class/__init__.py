@@ -32,13 +32,12 @@ def init(ctx):
 
 #from . import banner
 #from . import config
-#from . import mail
 #from . import passwd
 #from . import plot
 #from . import svn
 
 
-for name in ('add', 'group', 'list', 'parse'):
+for name in ('add', 'group', 'list', 'mail', 'parse'):
     module = importlib.import_module(f'.{name}', package='class')
     cli.add_command(module.cli)
 
@@ -61,8 +60,6 @@ for name in ('add', 'group', 'list', 'parse'):
 #
 #    svn.setup_argparse(
 #            subparsers.add_parser('svn', help = 'write SVN configuration'))
-#
-#    mail.setup_argparse(subparsers.add_parser('mail', help = 'send email to class'))
 #
 #    plotsub = subparsers.add_parser('plot', help = 'plot statistics')
 #    plot.setup_argparse(plotsub)
