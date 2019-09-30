@@ -39,10 +39,9 @@ def init(ctx):
 #from . import config
 #from . import passwd
 #from . import plot
-#from . import svn
 
 
-for name in ('add', 'group', 'list', 'mail', 'parse'):
+for name in ('add', 'group', 'list', 'mail', 'parse', 'svn'):
     module = importlib.import_module(f'.{name}', package='class')
     cli.add_command(module.cli)
 
@@ -58,9 +57,6 @@ for name in ('add', 'group', 'list', 'mail', 'parse'):
 #
 #    passwd.setup_argparse(subparsers.add_parser('passwd',
 #            help = "manage users' password hashes"))
-#
-#    svn.setup_argparse(
-#            subparsers.add_parser('svn', help = 'write SVN configuration'))
 #
 #    plotsub = subparsers.add_parser('plot', help = 'plot statistics')
 #    plot.setup_argparse(plotsub)

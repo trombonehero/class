@@ -1,28 +1,27 @@
-import errno
-import itertools
-import json
+import click
 import os
 
-from . import db
 
+@click.command('svn')
+@click.option('-o', '--outdir', metavar='DIR', default='.', show_default=True,
+              help='Directory to write SVN configuration files into')
+@click.option('-r', '--repo', required=True,
+              help='Repository name (e.g., engi4892)')
+@click.option('-p', '--prefix', default='',
+              help='prefix for SVN paths in the repo (e.g., "2018-19W")')
+@click.pass_context
+def cli(ctx, outdir, repo, prefix):
+    """Generate Subversion repository configuration directory."""
 
-def setup_argparse(parser):
-    parser.add_argument('-o', '--outdir', metavar = 'DIR', default = '.',
-            help = 'directory to write SVN configuration files')
-
-    parser.add_argument('-r', '--repo', required = True,
-            help = 'repository name (e.g., engi4892)')
-
-    parser.add_argument('-p', '--prefix', default = '',
-            help = 'prefix for SVN paths in the repo (e.g., 2018-19W)')
-
-
-def run(args, db):
-    try: os.makedirs(args.outdir)
+    try: os.makedirs(outdir)
     except OSError as e:
+        import errno
         if e.errno != errno.EEXIST:
             raise
 
+    from . import db
+
+    # Find all lab groups; set "group 0" to be the instructor and TAs
     groups = dict(
         (g.number, [ m.student.username for m in g.memberships ])
         for g in db.LabGroup.select()
@@ -33,15 +32,20 @@ def run(args, db):
     instructors = list(db.Instructor.select().where(db.Instructor.ta == False))
     tas = list(db.Instructor.select().where(db.Instructor.ta == True))
 
-    print('Writing %d groups and %d students to authz' % (
-        len(groups), len(students)))
+    with open(os.path.join(outdir, 'authz'), 'w') as authz:
+        write_authz(authz, groups, instructors, tas, students, repo, prefix)
 
-    authz = open(os.path.join(args.outdir, 'authz'), 'w')
+    with open(os.path.join(outdir, 'htpasswd'), 'w') as htpasswd:
+        write_htpasswd(htpasswd, instructors, tas, students)
 
-    repo = args.repo
-    prefix = args.prefix
+    with open(os.path.join(outdir, 'groups.json'), 'w') as group_json:
+        write_groups(group_json, groups)
 
-    authz.write(f'''
+
+def write_authz(f, groups, instructors, tas, students, repo, prefix):
+    print(f'Writing {len(groups)} groups, {len(students)} students to {f.name}')
+
+    f.write(f'''
 [groups]
 instructors = {','.join(i.username for i in instructors)}
 tas = {','.join(t.username for t in tas)}
@@ -64,29 +68,32 @@ tas = {','.join(t.username for t in tas)}
 ''')
 
     for (number, members) in groups.items():
-        path = os.path.join(args.prefix, 'groups', str(number))
-        authz.write(f'[{repo}:/{path}]\n')
+        path = os.path.join(prefix, 'groups', str(number))
+        f.write(f'[{repo}:/{path}]\n')
 
         for m in members:
-            authz.write(f'{m} = rw\n')
+            f.write(f'{m} = rw\n')
 
-        authz.write('\n')
+        f.write('\n')
 
     for s in students:
-        authz.write(f'[{repo}:/{prefix}/students/{s.username}]\n')
-        authz.write(f'{s.username} = rw\n\n')
+        f.write(f'[{repo}:/{prefix}/students/{s.username}]\n')
+        f.write(f'{s.username} = rw\n\n')
 
 
-    print('Writing %d instructors, %d TAs and %d students to %s' % (
-        len(instructors), len(tas), len(students), 'htpasswd'))
+def write_htpasswd(htpasswd, instructors, tas, students):
+    import itertools
 
-    htpasswd = open(os.path.join(args.outdir, 'htpasswd'), 'w')
+    print(f'Writing {len(instructors)} instructors, {len(tas)} TAs and ' +
+        f'{len(students)} students to {htpasswd.name}')
 
     for user in itertools.chain(instructors, tas, students):
         if user.pw_hash:
             htpasswd.write('%s:%s\n' % (user.username, user.pw_hash))
 
 
-    print('Writing %d groups to %s' % (len(groups), 'groups.json'))
-    group_json = open(os.path.join(args.outdir, 'groups.json'), 'w')
+def write_groups(group_json, groups):
+    import json
+
+    print(f'Writing {len(groups)} groups to {group_json.name}')
     json.dump(groups, group_json)
