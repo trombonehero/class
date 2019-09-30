@@ -1,27 +1,26 @@
-import peewee
-import sys
+import click
 
 
-def setup_argparse(parser):
-    parser.add_argument('--auto', action = 'store_true',
-            help = 'automatically group remainder')
+@click.command('group',
+               help='Create lab groups from (comma-separated) usernames.')
+@click.argument('usernames')
+@click.option('-a', '--auto', is_flag=True,
+              help='Auto-group all ungrouped students')
+@click.pass_context
+def cli(context, usernames, auto):
+    from . import db
 
-    parser.add_argument('students', help = 'students to group together',
-            nargs = '*')
-
-
-def run(args, db):
-    from db import GroupMembership, Student
-
-    students = [ Student.get(username = name) for name in args.students ]
+    students = [db.Student.get(username=u) for u in usernames.split(',')]
     if len(students) > 0:
         create_group(students, db)
 
-    if args.auto:
+    if auto:
         group_remainder(db)
 
 
 def create_group(students, db):
+    import sys
+
     g = db.LabGroup.create()
     sys.stdout.write('%4d  ' % g.number)
 
@@ -33,17 +32,17 @@ def create_group(students, db):
 
 
 def group_remainder(db):
-    from db import GroupMembership, Student
+    import peewee
 
     ungrouped = (
-        Student.select()
-               .join(GroupMembership, peewee.JOIN.LEFT_OUTER)
-               .where(GroupMembership.student == None)
-               .order_by(Student.student_id)
+        db.Student.select()
+                  .join(db.GroupMembership, peewee.JOIN.LEFT_OUTER)
+                  .where(db.GroupMembership.student == None)
+                  .order_by(db.Student.student_id)
     )
 
-    ugrad_groups = group(ungrouped.where(Student.graduate_student == False))
-    grad_groups = group(ungrouped.where(Student.graduate_student == True))
+    ugrad_groups = group(ungrouped.where(db.Student.graduate_student == False))
+    grad_groups = group(ungrouped.where(db.Student.graduate_student == True))
 
     groups = list(ugrad_groups) + list(grad_groups)
     print('Grouped %d students into %d groups:' % (len(ungrouped), len(groups)))
@@ -51,11 +50,11 @@ def group_remainder(db):
         create_group(students, db)
 
     print('ungrouped: %d' %
-        Student.select(peewee.fn.Count())
-               .join(GroupMembership, peewee.JOIN.LEFT_OUTER)
-               .where(GroupMembership.student == None)
-               .order_by(Student.student_id)
-               .scalar()
+        db.Student.select(peewee.fn.Count())
+                  .join(db.GroupMembership, peewee.JOIN.LEFT_OUTER)
+                  .where(db.GroupMembership.student == None)
+                  .order_by(db.Student.student_id)
+                  .scalar()
     )
 
 

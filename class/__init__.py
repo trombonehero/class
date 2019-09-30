@@ -33,7 +33,8 @@ cli.add_command(add.cli)
 
 #from . import banner
 #from . import config
-#from . import group
+from . import group
+cli.add_command(group.cli)
 
 from . import list as lst
 cli.add_command(lst.cli)
@@ -60,9 +61,6 @@ cli.add_command(parse.parse)
 #
 #    banner.setup_argparse(
 #            subparsers.add_parser('banner', help = 'interact directly with Banner'))
-#
-#    group.setup_argparse(subparsers.add_parser('group',
-#            help = 'group students together (e.g., for labs)'))
 #
 #    passwd.setup_argparse(subparsers.add_parser('passwd',
 #            help = "manage users' password hashes"))
