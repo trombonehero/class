@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import click
+import importlib
+
 
 @click.group()
 @click.pass_context
@@ -28,25 +30,17 @@ def init(ctx):
         raise e
 
 
-from . import add
-cli.add_command(add.cli)
-
 #from . import banner
 #from . import config
-from . import group
-cli.add_command(group.cli)
-
-from . import list as lst
-cli.add_command(lst.cli)
-
 #from . import mail
-
-from . import parse
-cli.add_command(parse.parse)
-
 #from . import passwd
 #from . import plot
 #from . import svn
+
+
+for name in ('add', 'group', 'list', 'parse'):
+    module = importlib.import_module(f'.{name}', package='class')
+    cli.add_command(module.cli)
 
 
 #def main():

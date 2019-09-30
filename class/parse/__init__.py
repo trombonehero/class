@@ -4,11 +4,11 @@ from . import classlist
 from . import transcript
 
 
-@click.group()
+@click.group('parse')
 @click.pass_context
-def parse(ctx):
+def cli(ctx):
     """Parse data from Banner HTML."""
 
 
-parse.add_command(classlist.cli)
-parse.add_command(transcript.cli)
+cli.add_command(classlist.cli)
+cli.add_command(transcript.cli)
