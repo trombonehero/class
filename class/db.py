@@ -1,5 +1,6 @@
 # vim: set fileencoding=utf8
 
+import click
 import collections
 from datetime import date, datetime
 from peewee import *
@@ -13,7 +14,9 @@ providers = {
     'sqlite': SqliteDatabase,
 }
 
-(provider, database) = config.database.split('://')
+config = click.get_current_context().obj
+
+(provider, database) = config['DATABASE_URL'].split('://')
 db = providers[provider](database)
 
 

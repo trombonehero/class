@@ -1,8 +1,6 @@
 import peewee
 import sys
 
-from . import db
-
 
 formatters = {
     'email': lambda s: '%20s' % s.email(),
@@ -16,41 +14,33 @@ formatters = {
     'username': lambda s: '%12s' % s.username,
 }
 
+def fmt_names():
+    return sorted(formatters.keys())
+
+
 sorters = {
-    'name': db.Student.forename,
-    'group': db.GroupMembership.id,
-    'id': db.Student.student_id,
-    'level': db.Student.graduate_student,
-    'username': db.Student.username,
+    'name': lambda db: db.Student.forename,
+    'group': lambda db: db.GroupMembership.id,
+    'id': lambda db: db.Student.student_id,
+    'level': lambda db: db.Student.graduate_student,
+    'username': lambda db: db.Student.username,
 }
 
-
-def setup_argparse(parser):
-    parser.add_argument('--csv', action = 'store_true',
-        help = 'Output data in CSV format')
-
-    parser.add_argument('--filter', help = 'SQL filter to apply')
-
-    parser.add_argument('--sort-by', default = list(sorters.keys())[0],
-        help = 'how to sort students (%s)' % ' | '.join(sorters.keys()))
-
-    parser.add_argument('--reverse', action = 'store_true',
-        help = 'sort class list in reverse')
-
-    parser.add_argument('details',
-            help = 'details to show for each student (possible details: %s)' %
-                ', '.join(sorted(formatters.keys())),
-        nargs = '*', default = [ 'username', 'id', 'name', 'email', 'group' ])
+def sort_names():
+    return sorted(sorters.keys())
 
 
-def run(args, db):
-    if args.sort_by not in sorters.keys():
-        sys.stderr.write("Invalid sort key: '%s'\nValid keys are: %s\n" % (
-            args.sort_by, ' '.join(sorters.keys())))
+def print_students(db, csv, filter, sort_by, reverse, details):
+    sort_keys = sorted(sorters.keys())
+    if sort_by not in sort_keys:
+        sys.stderr.write(
+            f'Invalid key "{sort_by}" (valid options: {", ".join(sort_keys)})\n')
         sys.exit(1)
 
-    f = [ formatters[key] for key in args.details ]
+    fields = details.split(',')
+    f = [formatters[key] for key in fields]
 
+    from . import db
     students = (
             db.Student.select()
                       .join(db.GroupMembership, peewee.JOIN.LEFT_OUTER)
@@ -58,18 +48,18 @@ def run(args, db):
                       .order_by(db.LabGroup.number)
     )
 
-    if args.filter:
-        students = students.where(db.SQL(args.filter))
+    if filter:
+        students = students.where(db.SQL(filter))
 
-    sorter = sorters[args.sort_by]
-    if args.reverse:
+    sorter = sorters[sort_by](db)
+    if reverse:
         sorter = sorter.desc()
 
-    if args.csv:
-        print(','.join([ '%s' % key for key in args.details ]))
+    if csv:
+        print(','.join([str(f) for f in fields]))
 
     for s in students.order_by(sorter):
-        print_details(s, f, args.csv)
+        print_details(s, f, csv)
 
 
 def print_details(student, formatters, csv = False):
