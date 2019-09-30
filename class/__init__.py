@@ -9,7 +9,7 @@ import sys
 #from . import group
 from . import list as lst
 #from . import mail
-#from . import parse
+from . import parse
 #from . import passwd
 #from . import plot
 #from . import svn
@@ -21,6 +21,9 @@ from . import list as lst
 def cli(ctx, db):
     ctx.ensure_object(dict)
     ctx.obj['DATABASE_URL'] = db
+
+
+cli.add_command(parse.parse)
 
 
 @cli.command()
@@ -74,9 +77,6 @@ def list(ctx, csv, filter, sort_by, reverse, details):
 #
 #    banner.setup_argparse(
 #            subparsers.add_parser('banner', help = 'interact directly with Banner'))
-#
-#    parsesub = subparsers.add_parser('parse', help = 'parse Banner HTML')
-#    parse.setup_argparse(parsesub)
 #
 #    group.setup_argparse(subparsers.add_parser('group',
 #            help = 'group students together (e.g., for labs)'))

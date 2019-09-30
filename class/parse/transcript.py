@@ -1,9 +1,15 @@
-from bs4 import BeautifulSoup
-import collections
+import click
 
 
-def run(args, db):
-    soup = BeautifulSoup(open(args.file, 'r'), "html.parser")
+@click.command('transcript')
+@click.pass_context
+@click.argument('transcript', type=click.File())
+def cli(ctx, transcript):
+    """Parse a student's HTML transcript."""
+
+    import bs4
+
+    soup = bs4.BeautifulSoup(transcript, "html.parser")
     (name, courses) = parse(soup)
 
     print('Parsed transcript for %s:' % name)
@@ -12,6 +18,8 @@ def run(args, db):
 
 
 def print_courses(courses):
+    import collections
+
     marks = collections.defaultdict(list)
     grades = collections.defaultdict(int)
 

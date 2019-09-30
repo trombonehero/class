@@ -1,21 +1,16 @@
-from bs4 import BeautifulSoup
-import collections
-from db import Student
+import click
 
-def run(args, db):
-    course_info = None
-    student_details = []
 
-    for filename in args.file:
-        soup = BeautifulSoup(open(filename, 'r'), "html.parser")
-        (info, students) = parse(soup)
+@click.command('classlist')
+@click.pass_context
+@click.argument('summary_file', type=click.File())
+def cli(ctx, summary_file):
+    """Parse a Banner class list."""
 
-        if not course_info: course_info = info
-        if course_info != info:
-            raise ValueError('mismatched course info: %s vs %s' %
-                             (course_info, info))
+    from bs4 import BeautifulSoup
 
-        student_details += students
+    soup = BeautifulSoup(summary_file, "html.parser")
+    course_info, students = parse(soup)
 
     course_info = { k.strip(): v for (k,v) in course_info.items() }
 
@@ -23,7 +18,7 @@ def run(args, db):
     print(course_info['duration'])
     print('')
 
-    (new, existing) = save_students(student_details)
+    (new, existing) = save_students(students)
     print('%d existing students, %d new:' % (len(existing), len(new)))
 
     for s in new:
@@ -31,15 +26,17 @@ def run(args, db):
 
 
 def save_students(students):
+    from .. import db
+
     (new_students, existing_students) = ([], [])
 
     for sd in students:
         username = sd['email'].split('@')[0]
 
-        existing = Student.select().where(Student.student_id == sd['id'])
+        existing = db.Student.select().where(db.Student.student_id == sd['id'])
         new_student = (existing.count() == 0)
 
-        s = Student(student_id = sd['id']) if new_student else existing.get()
+        s = db.Student(student_id = sd['id']) if new_student else existing.get()
 
         s.username = username
         (s.surname, s.forename) = sd['name'].split(', ')
@@ -75,6 +72,8 @@ def parse(soup):
     for s in sorted(students, key = lambda s: s.name):
         print('%9d %14s %-40s' % (s['id'], s['email'], s['name']))
     """
+
+    import collections
 
     raw_tables = soup.findAll('table', **{ 'class': 'datadisplaytable' })
     tables = dict([ (t.caption.text, t) for t in raw_tables ])
