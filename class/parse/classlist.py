@@ -26,7 +26,7 @@ def cli(ctx, summary_file):
 
 
 def save_students(students):
-    from .. import db
+    from . import db
 
     (new_students, existing_students) = ([], [])
 

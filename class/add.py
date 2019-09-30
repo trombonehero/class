@@ -8,7 +8,7 @@ import click
 def cli(ctx, instructor):
     """Add a student or instructor/TA to the class."""
 
-    from .. import db
+    from . import db
 
     if instructor:
         add_instructor(db)
