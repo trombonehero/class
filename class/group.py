@@ -43,7 +43,7 @@ def group_remainder(db):
     grad_groups = group(ungrouped.where(db.Student.graduate_student == True))
 
     groups = list(ugrad_groups) + list(grad_groups)
-    print('Grouped %d students into %d groups:' % (len(ungrouped), len(groups)))
+    print(f'Grouped {len(ungrouped)} students into {len(groups)} groups:')
     for students in groups:
         create_group(students, db)
 

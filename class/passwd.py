@@ -74,13 +74,12 @@ def init(db, username, all_students, filter):
         print(f'Generating {filename}')
         f = open(filename, 'w')
 
-        f.write('''
-%s
-Username:       %s
-Password:       %s
-Lab group(s):   %s
-''' % (user, user.username, password,
-       ', '.join([ str(g.group_id) for g in user.groups ])))
+        f.write(f'''
+{user}
+Username:       {user.username}
+Password:       {password}
+Lab group(s):   {', '.join([str(g.group_id) for g in user.groups])}
+''')
 
         if not save:
             user.pw_hash = htpasswd.get_hash(user.username)
