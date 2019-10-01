@@ -26,9 +26,6 @@ def cli(banner_root, ca_bunde, credential_file, term):
     """Pull data directly from Banner."""
 
 
-
-
-
 #import getpass
 #import importlib
 #import logging

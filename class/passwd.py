@@ -49,9 +49,9 @@ def init(db, username, all_students, filter):
 
         students = students.where(db.Student.username << usernames)
         instructors = (
-                db.Instructor.select()
-                             .where(db.Instructor.pw_hash == None)
-                             .where(db.Instructor.username << usernames)
+            db.Instructor.select()
+            .where(db.Instructor.pw_hash == None)
+            .where(db.Instructor.username << usernames)
         )
 
         matches = [u.username for u in itertools.chain(instructors, students)]
@@ -100,8 +100,8 @@ def reset(db, username):
 
     usernames = username
     users = itertools.chain(
-            db.Student.select().where(db.Student.username << usernames),
-            db.Instructor.select().where(db.Instructor.username << usernames)
+        db.Student.select().where(db.Student.username << usernames),
+        db.Instructor.select().where(db.Instructor.username << usernames),
     )
 
     # Create a temporary, in-memory htpasswd "file" to hold generated passwords

@@ -2,7 +2,7 @@ import collections
 
 
 def setup_argparse(parser):
-    parser.add_argument('student', help = 'student ID or username')
+    parser.add_argument('student', help='student ID or username')
 
 
 def run(args, db):
@@ -10,9 +10,9 @@ def run(args, db):
 
     id = args.student
     if id.startswith('0') or id.startswith('2'):
-        s = Student.get(student_id = int(id))
+        s = Student.get(student_id=int(id))
     else:
-        s = Student.get(username = id)
+        s = Student.get(username=id)
 
     print('%-20s  %09d  %s' % (s.name(), s.student_id, s.email()))
 
@@ -74,5 +74,3 @@ def run(args, db):
 #        axes.grid(True)
 #
 #    plt.show()
-
-

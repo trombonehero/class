@@ -34,7 +34,6 @@ def print_courses(db, courses):
 
             grades[grade(mark)] += 1
 
-
         except ValueError:
             pass
 
@@ -45,8 +44,8 @@ def print_courses(db, courses):
     print('')
     print('  Subj   N   Min   Avg   Max')
     print('  ----  --   ---  -----  ---')
-    for subject in sorted(marks.keys(), key = lambda k: len(marks[k]),
-                          reverse = True):
+    for subject in sorted(marks.keys(), key=lambda k: len(marks[k]),
+                          reverse=True):
 
         sub_marks = marks[subject]
         print('  %4s  %2d   %2d%%  %0.1f%%  %2d%%' % (
@@ -58,10 +57,14 @@ def print_courses(db, courses):
 
 
 def grade(mark):
-    if mark >= 80: return 'A'
-    if mark >= 65: return 'B'
-    if mark >= 55: return 'C'
-    if mark >= 50: return 'D'
+    if mark >= 80:
+        return 'A'
+    if mark >= 65:
+        return 'B'
+    if mark >= 55:
+        return 'C'
+    if mark >= 50:
+        return 'D'
     return 'F'
 
 
@@ -82,7 +85,7 @@ def parse(soup):
         print('%9d %14s %-40s' % (s['id'], s['email'], s['name']))
     """
 
-    (table,) = soup.findAll('table', **{ 'class': 'datadisplaytable' })
+    (table,) = soup.findAll('table', **{'class': 'datadisplaytable'})
 
     name = None
     courses = []
@@ -97,7 +100,7 @@ def parse(soup):
         if in_grades_section:
             if len(th) > 1:
                 if headers is None and th[0].text == 'Subject':
-                    headers = [ i.text for i in th ]
+                    headers = [i.text for i in th]
 
             if len(th) > 0:
                 thtext = th[0].text
@@ -128,7 +131,7 @@ def parse(soup):
 
                 if len(columns) == len(headers) + 1:        # don't ask.
                     detail = dict(
-                        zip(headers, [ c.text for c in row.findAll('td') ])
+                        zip(headers, [c.text for c in row.findAll('td')])
                     )
 
                     course = (

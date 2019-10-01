@@ -6,7 +6,6 @@ def cli():
     """Plot statistics (student grades, etc.)."""
 
 
-
 @cli.command()
 @click.argument('subject', required=True)
 @click.argument('course_code', required=True)
@@ -26,15 +25,15 @@ def course(db, subject, course_code):
 
     data = numpy.array([e.mark for e in marks])
 
-    fig, axes = plt.subplots(nrows = 2)
+    fig, axes = plt.subplots(nrows=2)
     axes[0].set_title('Marks in %s %s' % (subject, course_code))
 
     axes[0].boxplot(data, 0, 'rs', 0)
-    axes[0].set_xlim([ 0, 100 ])
+    axes[0].set_xlim([0, 100])
     axes[0].grid(True)
 
-    axes[1].hist(data, bins = 20)
-    axes[1].set_xlim([ 0, 100 ])
+    axes[1].hist(data, bins=20)
+    axes[1].set_xlim([0, 100])
     axes[1].grid(True)
 
     plt.show()
@@ -60,13 +59,13 @@ def subject(db, subject):
     for e in marks:
         data[e.code].append(e.mark)
 
-    fig, axes = plt.subplots(ncols = len(data))
+    fig, axes = plt.subplots(ncols=len(data))
     plt.title('Marks in all %s courses' % subject)
 
-    items = sorted(data.items(), key = lambda c_m: c_m[0])
+    items = sorted(data.items(), key=lambda c_m: c_m[0])
     for i, (course, marks) in enumerate(items):
         axes[i].boxplot(marks)
-        axes[i].set_ylim([ 0, 100 ])
+        axes[i].set_ylim([0, 100])
         axes[i].set_xlabel(course)
         axes[i].grid(True)
 
@@ -96,21 +95,21 @@ def eng_one(db):
             continue
 
         if (
-                (e.subject == 'CHEM' and e.code == '1050')
-                or (e.subject == 'ENGI' and
-                    (e.code == '1010'
-                     or e.code == '1020'
-                     or e.code == '1030'
-                     or e.code == '1040'))
-                or (e.subject == 'ENGL' and e.code == '1080')
-                or (e.subject == 'MATH' and
-                    (e.code == '1000'
-                     or e.code == '1001'
-                     or e.code == '2050'))
-                or (e.subject == 'PHYS' and
-                    (e.code == '1050'
-                     or e.code == '1051'))
-            ):
+            (e.subject == 'CHEM' and e.code == '1050')
+            or (e.subject == 'ENGI' and
+                (e.code == '1010'
+                 or e.code == '1020'
+                 or e.code == '1030'
+                 or e.code == '1040'))
+            or (e.subject == 'ENGL' and e.code == '1080')
+            or (e.subject == 'MATH' and
+                (e.code == '1000'
+                 or e.code == '1001'
+                 or e.code == '2050'))
+            or (e.subject == 'PHYS' and
+                (e.code == '1050'
+                 or e.code == '1051'))
+        ):
             course = (e.subject, e.code)
             courses[course].append(e.mark)
 
@@ -121,27 +120,26 @@ def eng_one(db):
             previous = pb[course] if course in pb else 0
             pb[course] = e.mark if e.mark > previous else previous
 
-
     import matplotlib.pyplot as plt
 
     dimensions = (5, len(courses))
 
-    plt.subplots(nrows = 5, ncols = len(courses))
+    plt.subplots(nrows=5, ncols=len(courses))
     plt.title('Marks in Engineering One courses')
 
-    histaxes = plt.subplot2grid(dimensions, (0, 0), colspan = len(courses))
-    histaxes.hist([ sum(s) / len(s) for s in students.values() ], bins = 30)
+    histaxes = plt.subplot2grid(dimensions, (0, 0), colspan=len(courses))
+    histaxes.hist([sum(s) / len(s) for s in students.values()], bins=30)
 
-    histaxes = plt.subplot2grid(dimensions, (1, 0), colspan = len(courses))
+    histaxes = plt.subplot2grid(dimensions, (1, 0), colspan=len(courses))
     histaxes.hist([
         sum(s.values()) / len(s.values()) for s in personal_best.values()
-    ], bins = 30)
+    ], bins=30)
 
-    items = sorted(courses.items(), key = lambda course,m: course)
-    for i, ((subject,course), marks) in enumerate(items):
-        axes = plt.subplot2grid(dimensions, (2, i), rowspan = 3)
+    items = sorted(courses.items(), key=lambda course, m: course)
+    for i, ((subject, course), marks) in enumerate(items):
+        axes = plt.subplot2grid(dimensions, (2, i), rowspan=3)
         axes.boxplot(marks)
-        axes.set_ylim([ 0, 100 ])
+        axes.set_ylim([0, 100])
         axes.set_xlabel('%s %s' % (subject, course))
         axes.grid(True)
 

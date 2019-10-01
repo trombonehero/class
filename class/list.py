@@ -15,6 +15,7 @@ formatters = {
     'username': lambda s: '%12s' % s.username,
 }
 
+
 def fmt_names():
     return sorted(formatters.keys())
 
@@ -26,6 +27,7 @@ sorters = {
     'level': lambda db: db.Student.graduate_student,
     'username': lambda db: db.Student.username,
 }
+
 
 def sort_names():
     return sorted(sorters.keys())
@@ -59,10 +61,10 @@ def print_students(db, csv, filter, sort_by, reverse, details):
     f = [formatters[key] for key in fields]
 
     students = (
-            db.Student.select()
-                      .join(db.GroupMembership, peewee.JOIN.LEFT_OUTER)
-                      .join(db.LabGroup, peewee.JOIN.LEFT_OUTER)
-                      .order_by(db.LabGroup.number)
+        db.Student.select()
+        .join(db.GroupMembership, peewee.JOIN.LEFT_OUTER)
+        .join(db.LabGroup, peewee.JOIN.LEFT_OUTER)
+        .order_by(db.LabGroup.number)
     )
 
     if filter:
@@ -79,7 +81,7 @@ def print_students(db, csv, filter, sort_by, reverse, details):
         print_details(s, f, csv)
 
 
-def print_details(student, formatters, csv = False):
+def print_details(student, formatters, csv=False):
     line = []
 
     for f in formatters:

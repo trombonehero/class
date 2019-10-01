@@ -24,7 +24,7 @@ def create_group(students, db):
 
     for s in students:
         sys.stdout.write('  %12s %-20s' % (s.username, s.name()))
-        db.GroupMembership.create(group = g, student = s)
+        db.GroupMembership.create(group=g, student=s)
 
     sys.stdout.write('\n')
 
@@ -48,15 +48,14 @@ def group_remainder(db):
         create_group(students, db)
 
     print('ungrouped: %d' %
-        db.Student.select(peewee.fn.Count())
-                  .join(db.GroupMembership, peewee.JOIN.LEFT_OUTER)
-                  .where(db.GroupMembership.student == None)
-                  .order_by(db.Student.student_id)
-                  .scalar()
-    )
+          db.Student.select(peewee.fn.Count())
+          .join(db.GroupMembership, peewee.JOIN.LEFT_OUTER)
+          .where(db.GroupMembership.student == None)
+          .order_by(db.Student.student_id)
+          .scalar())
 
 
 # Organize students into groups.
-def group(students, size = 2):
-    args = [ iter(list(students)) ] * size
+def group(students, size=2):
+    args = [iter(list(students))] * size
     return zip(*args)

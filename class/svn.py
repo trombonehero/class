@@ -13,7 +13,8 @@ import os
 def cli(db, outdir, repo, prefix):
     """Generate Subversion repository configuration directory."""
 
-    try: os.makedirs(outdir)
+    try:
+        os.makedirs(outdir)
     except OSError as e:
         import errno
         if e.errno != errno.EEXIST:
@@ -21,10 +22,10 @@ def cli(db, outdir, repo, prefix):
 
     # Find all lab groups; set "group 0" to be the instructor and TAs
     groups = dict(
-        (g.number, [ m.student.username for m in g.memberships ])
+        (g.number, [m.student.username for m in g.memberships])
         for g in db.LabGroup.select()
     )
-    groups[0] = [ '@instructors', '@tas' ]
+    groups[0] = ['@instructors', '@tas']
 
     students = list(db.Student.select())
     instructors = list(db.Instructor.select().where(db.Instructor.ta == False))
@@ -41,7 +42,8 @@ def cli(db, outdir, repo, prefix):
 
 
 def write_authz(f, groups, instructors, tas, students, repo, prefix):
-    print(f'Writing {len(groups)} groups, {len(students)} students to {f.name}')
+    print(
+        f'Writing {len(groups)} groups, {len(students)} students to {f.name}')
 
     f.write(f'''
 [groups]
@@ -83,7 +85,7 @@ def write_htpasswd(htpasswd, instructors, tas, students):
     import itertools
 
     print(f'Writing {len(instructors)} instructors, {len(tas)} TAs and ' +
-        f'{len(students)} students to {htpasswd.name}')
+          f'{len(students)} students to {htpasswd.name}')
 
     for user in itertools.chain(instructors, tas, students):
         if user.pw_hash:

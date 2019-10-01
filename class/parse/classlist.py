@@ -12,7 +12,7 @@ def cli(db, summary_file):
     soup = BeautifulSoup(summary_file, "html.parser")
     course_info, students = parse(soup)
 
-    course_info = { k.strip(): v for (k,v) in course_info.items() }
+    course_info = {k.strip(): v for (k, v) in course_info.items()}
 
     print('%s (CRN %d)' % (course_info['name'], course_info['crn']))
     print(course_info['duration'])
@@ -34,7 +34,7 @@ def save_students(db, students):
         existing = db.Student.select().where(db.Student.student_id == sd['id'])
         new_student = (existing.count() == 0)
 
-        s = db.Student(student_id = sd['id']) if new_student else existing.get()
+        s = db.Student(student_id=sd['id']) if new_student else existing.get()
 
         s.username = username
         (s.surname, s.forename) = sd['name'].split(', ')
@@ -45,9 +45,9 @@ def save_students(db, students):
             s.forename = ' '.join(forenames[:-1])
             s.initial = forenames[-1][:-1]
 
-        # Since Student has a custom primary key (the student ID), we need 
+        # Since Student has a custom primary key (the student ID), we need
         # to force the use of INSERT on our first call to save()
-        s.save(force_insert = new_student)
+        s.save(force_insert=new_student)
 
         (new_students if new_student else existing_students).append(s)
 
@@ -73,13 +73,13 @@ def parse(soup):
 
     import collections
 
-    raw_tables = soup.findAll('table', **{ 'class': 'datadisplaytable' })
-    tables = dict([ (t.caption.text, t) for t in raw_tables ])
+    raw_tables = soup.findAll('table', **{'class': 'datadisplaytable'})
+    tables = dict([(t.caption.text, t) for t in raw_tables])
 
     course_info = tables['Course Information'].findAll('tr')
     course_info = dict(
-        zip([ 'name', 'crn', 'duration', 'status' ],
-            [ i.text.strip() for i in course_info ])
+        zip(['name', 'crn', 'duration', 'status'],
+            [i.text.strip() for i in course_info])
     )
 
     # Return "Duration:\n" prefix from duration string
@@ -98,9 +98,10 @@ def parse(soup):
             continue
 
         columns = {
-            k: converters[k](v) for (k,v) in 
+            k: converters[k](v) for (k, v) in
             list(zip(
-                [ 'name', 'id', 'status', 'degree', 'credit_hours', 'grade', 'email' ],
+                ['name', 'id', 'status', 'degree',
+                    'credit_hours', 'grade', 'email'],
                 columns[1:]
             ))
         }
