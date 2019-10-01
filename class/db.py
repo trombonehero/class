@@ -5,9 +5,6 @@ import collections
 from datetime import date, datetime
 from peewee import *
 
-from . import config
-
-
 providers = {
     'mysql': MySQLDatabase,
     'postgres': PostgresqlDatabase,

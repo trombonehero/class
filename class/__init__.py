@@ -36,7 +36,6 @@ def init(ctx):
 
 
 #from . import banner
-#from . import config
 
 
 for name in ('add', 'group', 'list', 'mail', 'parse', 'passwd', 'plot', 'svn'):
@@ -56,7 +55,6 @@ for name in ('add', 'group', 'list', 'mail', 'parse', 'passwd', 'plot', 'svn'):
 #    args = argp.parse_args()
 #
 #    # Set database URL and open the connection:
-#    setattr(config, 'database', args.db)
 #    from . import db
 #
 #    db.connect()
