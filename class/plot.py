@@ -2,8 +2,7 @@ import click
 
 
 @click.group('plot')
-@click.pass_context
-def cli(ctx):
+def cli():
     """Plot statistics (student grades, etc.)."""
 
 
@@ -11,14 +10,12 @@ def cli(ctx):
 @cli.command()
 @click.argument('subject', required=True)
 @click.argument('course_code', required=True)
-@click.pass_context
-def course(ctx, subject, course_code):
+@click.pass_obj
+def course(db, subject, course_code):
     """Plot all students' marks in a specific course."""
 
     import matplotlib.pyplot as plt
     import numpy
-
-    from . import db
 
     marks = (
         db.TranscriptEntry.select(db.TranscriptEntry.mark)
@@ -45,15 +42,13 @@ def course(ctx, subject, course_code):
 
 @cli.command()
 @click.argument('subject', required=True)
-@click.pass_context
-def subject(ctx, subject):
+@click.pass_obj
+def subject(db, subject):
     """Parse grades in all courses in a subject."""
 
     import collections
     import matplotlib.pyplot as plt
     import numpy
-
-    from . import db
 
     marks = (
         db.TranscriptEntry.select()
@@ -84,13 +79,11 @@ def subject(ctx, subject):
 
 
 @cli.command()
-@click.pass_context
-def eng_one(ctx):
+@click.pass_obj
+def eng_one(db):
     """Plot marks in all Engineering One courses."""
 
     import collections
-
-    from . import db
 
     Entry = db.TranscriptEntry
 

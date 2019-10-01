@@ -6,10 +6,8 @@ import click
 @click.argument('usernames')
 @click.option('-a', '--auto', is_flag=True,
               help='Auto-group all ungrouped students')
-@click.pass_context
-def cli(context, usernames, auto):
-    from . import db
-
+@click.pass_obj
+def cli(db, usernames, auto):
     students = [db.Student.get(username=u) for u in usernames.split(',')]
     if len(students) > 0:
         create_group(students, db)

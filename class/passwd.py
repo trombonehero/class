@@ -1,22 +1,25 @@
 import click
 import xkcdpass.xkcd_password as xkcd
 
+length = 4
+save = True
+wordlist = None
+
 
 @click.group('passwd')
-@click.option('--length', default=4, show_default=True,
+@click.option('--words', default=4, show_default=True,
               help='number of words to use in each password')
 @click.option('-n', '--no-save', is_flag=True, help="don't save anything")
-@click.option('-w', '--wordfile', default=xkcd.locate_wordfile(),
+@click.option('--wordfile', default=xkcd.locate_wordfile(),
               help='file containing source words')
-@click.pass_context
-def cli(ctx, length, no_save, wordfile):
+def cli(words, no_save, wordfile):
     """Generate or reset user passwords."""
 
-    ctx.ensure_object(dict)
+    global length, save, wordlist
 
-    ctx.obj['length'] = length
-    ctx.obj['save'] = not no_save
-    ctx.obj['words'] = xkcd.generate_wordlist(wordfile)
+    length = int(words)
+    save = not no_save
+    wordlist = xkcd.generate_wordlist(wordfile)
 
 
 @cli.command()
@@ -24,8 +27,8 @@ def cli(ctx, length, no_save, wordfile):
 @click.option('--all-students', is_flag=True,
               help="initialize all currently-unset students' passwords")
 @click.option('--filter', help='SQL filter for --all-students')
-@click.pass_context
-def init(ctx, username, all_students, filter):
+@click.pass_obj
+def init(db, username, all_students, filter):
     """Initialized unset passwords."""
 
     import itertools
@@ -35,8 +38,6 @@ def init(ctx, username, all_students, filter):
     if len(username) == 0 and not all_students:
         sys.stderr.write('Must specify usernames or --all-students\n')
         sys.exit(1)
-
-    from . import db
 
     students = db.Student.select().where(db.Student.pw_hash == None)
 
@@ -64,10 +65,9 @@ def init(ctx, username, all_students, filter):
     # Create a temporary, in-memory htpasswd "file" to hold generated passwords
     # in the proper Apache htpasswd format
     htpasswd = passlib.apache.HtpasswdFile()
-    cfg = ctx.obj
 
     for user in itertools.chain(instructors, students):
-        password = xkcd.generate_xkcdpassword(cfg['words'], cfg['length'])
+        password = xkcd.generate_xkcdpassword(wordlist, words)
         htpasswd.set_password(user.username, password)
 
         filename = user.username + '.mail'
@@ -82,7 +82,7 @@ Lab group(s):   %s
 ''' % (user, user.username, password,
        ', '.join([ str(g.group_id) for g in user.groups ])))
 
-        if not cfg['save']:
+        if not save:
             user.pw_hash = htpasswd.get_hash(user.username)
             user.save()
 
@@ -91,14 +91,12 @@ Lab group(s):   %s
 
 @cli.command()
 @click.argument('username', nargs=-1)
-@click.pass_context
-def reset(ctx, username):
+@click.pass_obj
+def reset(db, username):
     """Reset passwords for specified usernames."""
 
     import itertools
     import passlib.apache
-
-    from . import db
 
     usernames = username
     users = itertools.chain(
@@ -109,14 +107,13 @@ def reset(ctx, username):
     # Create a temporary, in-memory htpasswd "file" to hold generated passwords
     # in the proper Apache htpasswd format
     htpasswd = passlib.apache.HtpasswdFile()
-    cfg = ctx.obj
 
     for user in users:
-        password = xkcd.generate_xkcdpassword(cfg['words'], cfg['length'])
+        password = xkcd.generate_xkcdpassword(wordlist, words)
         htpasswd.set_password(user.username, password)
 
         print('%s: %s' % (user.username, password))
 
-        if cfg['save']:
+        if save:
             user.pw_hash = htpasswd.get_hash(user.username)
             user.save()

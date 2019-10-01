@@ -4,11 +4,9 @@ import click
 @click.command('add')
 @click.option('--instructor', is_flag=True,
               help='Is this person a TA or instructor (vs a student)?')
-@click.pass_context
-def cli(ctx, instructor):
+@click.pass_obj
+def cli(db, instructor):
     """Add a student or instructor/TA to the class."""
-
-    from . import db
 
     if instructor:
         add_instructor(db)

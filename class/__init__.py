@@ -5,12 +5,14 @@ import importlib
 
 
 @click.group()
-@click.pass_context
-@click.option('-d', '--db', default='sqlite://class.db')
+@click.option('-d', '--db-url', default='sqlite://class.db')
 @click.option('-v', '--verbose', is_flag=True, help='Enable verbose logging.')
-def cli(ctx, db, verbose):
-    ctx.ensure_object(dict)
-    ctx.obj['DATABASE_URL'] = db
+@click.pass_context
+def cli(ctx, db_url, verbose):
+    from . import db
+
+    db.set_url(db_url)
+    ctx.obj = db
 
     import logging
     logging.basicConfig(format='[%(levelname)s]\t%(message)s',
@@ -18,12 +20,11 @@ def cli(ctx, db, verbose):
 
 
 @cli.command()
-@click.pass_context
-def init(ctx):
+@click.pass_obj
+def init(db):
     """Initialize a new class database."""
 
     try:
-        from . import db
         db.setup()
 
     except Exception as e:

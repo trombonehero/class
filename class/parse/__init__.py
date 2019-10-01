@@ -5,8 +5,7 @@ from . import transcript
 
 
 @click.group('parse')
-@click.pass_context
-def cli(ctx):
+def cli():
     """Parse data from Banner HTML."""
 
 

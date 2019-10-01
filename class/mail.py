@@ -18,14 +18,12 @@ import click
 @click.option('--smtp', help='SMTP server', metavar='HOSTNAME',
               default='smtp.mun.ca', show_default=True)
 
-@click.pass_context
-def cli(ctx, subject, to, to_all, filter, sender, encoding, smtp, test, file):
+@click.pass_obj
+def cli(db, subject, to, to_all, filter, sender, encoding, smtp, test, file):
     """Send email to the class or individual students."""
 
     import jinja2
     import sys
-
-    from . import db
 
     try:
         if sender:

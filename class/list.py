@@ -32,7 +32,6 @@ def sort_names():
 
 
 @click.command('list')
-@click.pass_context
 @click.option('--csv', help='output in CSV format', is_flag=True)
 @click.option('--filter', help='SQL filter to apply')
 @click.option('--sort-by', default='name',
@@ -42,10 +41,9 @@ def sort_names():
 @click.option('--details', default='username,id,name,email,group',
               help='what to print about each student' +
                    f' (comma-separated list of: {", ".join(fmt_names())})')
-def cli(ctx, csv, filter, sort_by, reverse, details):
+@click.pass_obj
+def cli(db, csv, filter, sort_by, reverse, details):
     """List students in the course."""
-
-    from . import db
 
     print_students(db, csv, filter, sort_by, reverse, details)
 
@@ -60,7 +58,6 @@ def print_students(db, csv, filter, sort_by, reverse, details):
     fields = details.split(',')
     f = [formatters[key] for key in fields]
 
-    from . import db
     students = (
             db.Student.select()
                       .join(db.GroupMembership, peewee.JOIN.LEFT_OUTER)

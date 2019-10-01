@@ -9,8 +9,8 @@ import os
               help='Repository name (e.g., engi4892)')
 @click.option('-p', '--prefix', default='',
               help='prefix for SVN paths in the repo (e.g., "2018-19W")')
-@click.pass_context
-def cli(ctx, outdir, repo, prefix):
+@click.pass_obj
+def cli(db, outdir, repo, prefix):
     """Generate Subversion repository configuration directory."""
 
     try: os.makedirs(outdir)
@@ -18,8 +18,6 @@ def cli(ctx, outdir, repo, prefix):
         import errno
         if e.errno != errno.EEXIST:
             raise
-
-    from . import db
 
     # Find all lab groups; set "group 0" to be the instructor and TAs
     groups = dict(

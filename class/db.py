@@ -5,16 +5,25 @@ import collections
 from datetime import date, datetime
 from peewee import *
 
-providers = {
-    'mysql': MySQLDatabase,
-    'postgres': PostgresqlDatabase,
-    'sqlite': SqliteDatabase,
-}
+db = DatabaseProxy()
 
-config = click.get_current_context().obj
 
-(provider, database) = config['DATABASE_URL'].split('://')
-db = providers[provider](database)
+def set_url(db_url):
+    providers = {
+        'mysql': MySQLDatabase,
+        'postgres': PostgresqlDatabase,
+        'sqlite': SqliteDatabase,
+    }
+
+    try:
+        provider, database = db_url.split('://')
+    except ValueError as e:
+        import sys
+        sys.stderr.write(f'Invalid database URL: "{db_url}"\n')
+        sys.stderr.write('(expected, e.g., "sqlite://filename.db")\n')
+        sys.exit(1)
+
+    db.initialize(providers[provider](database))
 
 
 class Instructor(Model):

@@ -2,9 +2,9 @@ import click
 
 
 @click.command('classlist')
-@click.pass_context
 @click.argument('summary_file', type=click.File())
-def cli(ctx, summary_file):
+@click.pass_obj
+def cli(db, summary_file):
     """Parse a Banner class list."""
 
     from bs4 import BeautifulSoup
@@ -18,16 +18,14 @@ def cli(ctx, summary_file):
     print(course_info['duration'])
     print('')
 
-    (new, existing) = save_students(students)
+    (new, existing) = save_students(db, students)
     print('%d existing students, %d new:' % (len(existing), len(new)))
 
     for s in new:
         print('%12s %9s %-24s' % (s.username, s.student_id, s.name()))
 
 
-def save_students(students):
-    from . import db
-
+def save_students(db, students):
     (new_students, existing_students) = ([], [])
 
     for sd in students:

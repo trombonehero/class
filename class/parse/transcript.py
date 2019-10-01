@@ -2,22 +2,22 @@ import click
 
 
 @click.command('transcript')
-@click.pass_context
 @click.argument('transcript', type=click.File())
-def cli(ctx, transcript):
+@click.pass_obj
+def cli(db, transcript):
     """Parse a student's HTML transcript."""
 
     import bs4
 
     soup = bs4.BeautifulSoup(transcript, "html.parser")
-    (name, courses) = parse(soup)
+    (name, courses) = parse(db, soup)
 
     print('Parsed transcript for %s:' % name)
     print('')
     print_courses(courses)
 
 
-def print_courses(courses):
+def print_courses(db, courses):
     import collections
 
     marks = collections.defaultdict(list)
