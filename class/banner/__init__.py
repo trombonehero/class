@@ -1,3 +1,4 @@
+import datetime
 import getpass
 import importlib
 import logging
@@ -7,7 +8,17 @@ import requests
 import sys
 import traceback
 
-from .. import config
+
+#
+# In Banner, terms are numbered as:
+#
+# 20xx01: Fall 20xx (Sep-Dec 20xx)
+# 20xx02: Winter 20xx (Jan-Apr 20xx+1)
+# 20xx03: Spring 20xx (May-Aug 20xx+1)
+#
+today = datetime.date.today()
+term = ((today.month - 9) % 12) / 4 + 1
+term = '%04d%02d' % (today.year - term / 2, term)
 
 
 class LoginError(BaseException):
@@ -56,15 +67,14 @@ class ParseError(BaseException):
 
 
 def setup_argparse(parser):
-    parser.add_argument('--banner-root', default=config.banner_root,
+    parser.add_argument('--banner-root', default='https://www5.mun.ca/admit',
                         help='Root URL for all Banner requests')
     parser.add_argument('--ca-bundle', default=False,
                         help='path to CA certificate bundle')
-    parser.add_argument('--credential-file', default=config.credential_file,
+    parser.add_argument('--credential-file', default='credentials.yaml',
                         help='username/password file (YAML format)')
-    parser.add_argument('--term', default=config.term,
-                        help='e.g., Fall 2016: 201601 [default: %s]' %
-                        config.term)
+    parser.add_argument('--term', default=term,
+                        help='e.g., Fall 2016: 201601 [default: %s]' % term)
 
     subparsers = parser.add_subparsers(dest='banner_command')
 
