@@ -21,23 +21,6 @@ term = ((today.month - 9) % 12) / 4 + 1
 term = '%04d%02d' % (today.year - term / 2, term)
 
 
-class LoginError(BaseException):
-    def __init__(self, username='<unknown>', cause=None):
-        """
-        username: the Banner username we tried to log in with
-        cause: a (type,value,traceback) triple from sys.exc_info()
-        """
-
-        self.username = username
-        self.cause = cause
-
-    def __str__(self):
-        if self.cause:
-            traceback.print_exception(*self.cause)
-
-        return 'LoginError: failed to log in as %s' % self.username
-
-
 class ParseError(BaseException):
     def __init__(self, message, soup, cause=None):
         """
