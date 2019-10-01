@@ -35,30 +35,9 @@ def init(ctx):
         raise e
 
 
-#from . import banner
-
-
 for name in ('add', 'group', 'list', 'mail', 'parse', 'passwd', 'plot', 'svn'):
     module = importlib.import_module(f'.{name}', package='class')
     cli.add_command(module.cli)
-
-
-#def main():
-#    import argparse
-#    import importlib
-#
-#
-#    argp = argparse.ArgumentParser()
-#    banner.setup_argparse(
-#            subparsers.add_parser('banner', help = 'interact directly with Banner'))
-#
-#    args = argp.parse_args()
-#
-#    # Set database URL and open the connection:
-#    from . import db
-#
-#    db.connect()
-#    db.close()
 
 
 if __name__ == '__main__':
