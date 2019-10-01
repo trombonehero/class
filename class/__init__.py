@@ -36,7 +36,7 @@ def init(db):
         raise e
 
 
-for name in ('add', 'group', 'list', 'mail', 'parse', 'passwd', 'plot', 'svn'):
+for name in ('add', 'banner', 'group', 'list', 'mail', 'parse', 'passwd', 'plot', 'svn'):
     module = importlib.import_module(f'.{name}', package='class')
     cli.add_command(module.cli)
 
