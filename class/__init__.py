@@ -37,10 +37,9 @@ def init(ctx):
 
 #from . import banner
 #from . import config
-#from . import plot
 
 
-for name in ('add', 'group', 'list', 'mail', 'parse', 'passwd', 'svn'):
+for name in ('add', 'group', 'list', 'mail', 'parse', 'passwd', 'plot', 'svn'):
     module = importlib.import_module(f'.{name}', package='class')
     cli.add_command(module.cli)
 
@@ -53,9 +52,6 @@ for name in ('add', 'group', 'list', 'mail', 'parse', 'passwd', 'svn'):
 #    argp = argparse.ArgumentParser()
 #    banner.setup_argparse(
 #            subparsers.add_parser('banner', help = 'interact directly with Banner'))
-#
-#    plotsub = subparsers.add_parser('plot', help = 'plot statistics')
-#    plot.setup_argparse(plotsub)
 #
 #    args = argp.parse_args()
 #
