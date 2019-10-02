@@ -1,8 +1,9 @@
-import banner.classlist
 import humanize
 import inflect
 import requests
 import sys
+
+from .. import banner
 
 
 class_list = 'bwlkfcwl.P_FacClaListSum'

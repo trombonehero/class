@@ -1,8 +1,9 @@
 import humanize
 import inflect
-import parse.classlist
 import requests
 import sys
+
+from .. import parse
 
 
 class_list = 'bwlkfcwl.P_FacClaListSum'

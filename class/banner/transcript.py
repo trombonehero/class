@@ -1,9 +1,10 @@
 import banner
 import datetime
-import parse.transcript
 import peewee
 import requests
 import sys
+
+from .. import parse
 
 
 display_transcript = 'bwlkftrn.P_FacDispTran'
