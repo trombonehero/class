@@ -16,14 +16,6 @@ term = '%04d%02d' % (today.year - term / 2, term)
 browser = None
 
 
-class urlmapper:
-    def __init__(self, root):
-        self.root = root
-
-    def map(self, relative):
-        return '%s/%s' % (self.root, relative)
-
-
 @click.group('banner')
 @click.option('--banner-root', help='Root URL for all Banner requests',
               default='https://www5.mun.ca/admit', show_default=True)
@@ -37,14 +29,14 @@ def cli(banner_root, ca_bundle, credentials, term):
 
     import yaml
 
-    urls = urlmapper(banner_root)
     credential = yaml.load(credentials)
 
     try:
         global browser
 
-        browser = login(credential, urls, ca_bundle)
-        browser.set_term(term, urls)
+        banner_url = lambda path: f'{banner_root}/{path}'
+        browser = login(credential, banner_url, ca_bundle)
+        browser.set_term(term)
 
     except BaseException as e:
         import sys
@@ -112,7 +104,7 @@ class ParseError(BaseException):
             self.message, self.filename)
 
 
-def login(credential, urls, ca_bundle):
+def login(credential, banner_url, ca_bundle):
     import logging
     import mechanicalsoup
 
@@ -120,11 +112,12 @@ def login(credential, urls, ca_bundle):
     login_verify = 'twbkwbis.P_ValLogin'
 
     browser = mechanicalsoup.Browser(soup_config={'features': 'html.parser'})
+    browser.banner_url = banner_url
     browser.log = logging.getLogger()
 
-    browser.log.info('Logging in via %s' % urls.map(login_prompt))
-    browser.get(urls.map(login_prompt), verify=ca_bundle)
-    result = browser.post(urls.map(login_verify), {
+    browser.log.info('Logging in via %s' % banner_url(login_prompt))
+    browser.get(banner_url(login_prompt), verify=ca_bundle)
+    result = browser.post(banner_url(login_verify), {
         'sid': credential['username'],
         'PIN': credential['password'],
     })
@@ -135,12 +128,11 @@ def login(credential, urls, ca_bundle):
     import types
     browser.ca_bundle = ca_bundle
     browser.set_term = types.MethodType(set_term, browser)
-    browser.urls = urls
 
     return browser
 
 
-def set_term(browser, term, urls):
+def set_term(browser, term):
     """
     Set the term (e.g., Fall 2016) on the current browser session.
 
@@ -152,8 +144,8 @@ def set_term(browser, term, urls):
 
     term_set = 'bwlkostm.P_FacStoreTerm2'
 
-    browser.log.debug('Setting term to %s @ %s' % (term, urls.map(term_set)))
-    result = browser.post(browser.urls.map(term_set), {'term': term})
+    browser.log.debug('Setting term to %s @ %s' % (term, term_set))
+    result = browser.post(browser.banner_url(term_set), {'term': term})
 
     if not result.ok:
         raise ValueError(result)
