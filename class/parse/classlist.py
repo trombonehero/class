@@ -2,15 +2,26 @@ import click
 
 
 @click.command('classlist')
-@click.argument('summary_file', type=click.File())
+@click.argument('html', type=click.File(), nargs=-1, required=True)
 @click.pass_obj
-def cli(db, summary_file):
+def cli(db, html):
     """Parse a Banner class list."""
 
     from bs4 import BeautifulSoup
 
-    soup = BeautifulSoup(summary_file, "html.parser")
-    course_info, students = parse(soup)
+    course_info = None
+    student_details = []
+
+    for html_file in html:
+        soup = BeautifulSoup(html_file, "html.parser")
+        info, students = parse(soup)
+
+        if not course_info:
+            course_info = info
+        elif course_info != info:
+            raise ValueError(f'course mismatch: {info} vs {course_info}')
+
+        student_details += students
 
     course_info = {k.strip(): v for (k, v) in course_info.items()}
 
@@ -18,7 +29,7 @@ def cli(db, summary_file):
     print(course_info['duration'])
     print('')
 
-    (new, existing) = save_students(db, students)
+    (new, existing) = save_students(db, student_details)
     print('%d existing students, %d new:' % (len(existing), len(new)))
 
     for s in new:
