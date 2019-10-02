@@ -14,7 +14,7 @@ term = ((today.month - 9) % 12) / 4 + 1
 term = '%04d%02d' % (today.year - term / 2, term)
 
 
-@click.command('banner')
+@click.group('banner')
 @click.option('--banner-root', help='Root URL for all Banner requests',
               default='https://www5.mun.ca/admit', show_default=True)
 @click.option('--ca-bundle', help='path to CA certificate bundle')
