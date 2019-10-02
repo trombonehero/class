@@ -2,6 +2,7 @@
 
 import click
 import importlib
+import pkgutil
 
 
 @click.group()
@@ -36,9 +37,13 @@ def init(db):
         raise e
 
 
-for name in ('add', 'banner', 'group', 'list', 'mail', 'parse', 'passwd', 'plot', 'svn'):
-    module = importlib.import_module(f'.{name}', package='class')
-    cli.add_command(module.cli)
+#
+# Add submodules:
+#
+for module_info in pkgutil.walk_packages(['class']):
+    m = importlib.import_module(f'.{module_info.name}', package='class')
+    if 'cli' in dir(m):
+        cli.add_command(m.cli)
 
 
 if __name__ == '__main__':
