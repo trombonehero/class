@@ -2,6 +2,7 @@
 
 import click
 import importlib
+import os
 import pkgutil
 
 
@@ -40,7 +41,7 @@ def init(db):
 #
 # Add submodules:
 #
-for module_info in pkgutil.walk_packages(['class']):
+for module_info in pkgutil.walk_packages([os.path.dirname(__file__)]):
     m = importlib.import_module(f'.{module_info.name}', package='class')
     if 'cli' in dir(m):
         cli.add_command(m.cli)
