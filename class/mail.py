@@ -1,4 +1,5 @@
 import click
+import time
 
 
 @click.command('mail')
@@ -73,6 +74,7 @@ class SMTPSender:
     def send(self, sender, recipient, message):
         print('Sending to %s' % recipient)
         self.smtp.sendmail(sender, [recipient], message.as_string())
+        time.sleep(0.1)
 
 
 class TestSender:
