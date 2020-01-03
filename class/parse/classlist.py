@@ -1,10 +1,16 @@
 import click
 
 
-@click.command('classlist')
+@click.group('classlist')
+def cli():
+    """Parse a classlist/roster."""
+    pass
+
+
+@cli.command()
 @click.argument('html', type=click.File(), nargs=-1, required=True)
 @click.pass_obj
-def cli(db, html):
+def banner(db, html):
     """Parse a Banner class list."""
 
     from bs4 import BeautifulSoup
@@ -36,6 +42,42 @@ def cli(db, html):
         print('%12s %9s %-24s' % (s.username, s.student_id, s.name()))
 
 
+@cli.command()
+@click.argument('csv_file', type=click.File())
+@click.pass_obj
+def gradescope(db, csv_file):
+    """Parse a Gradescope roster (CSV format)."""
+
+    import csv
+
+    # Read CSV headers from the first row
+    r = csv.reader(csv_file)
+    headers = next(r)
+
+    # Parse student details
+    students = []
+    for row in r:
+        data = dict(zip(headers, row))
+
+        if data['Role'] != 'Student':
+            print(f"{data['SID']}/{data['SID']} not a student ({data['Role']})")
+            continue
+
+        # Translate from Gradescope roster to expected format
+        students.append({
+            'name': data['Name'],
+            'id': data['SID'],
+            'email': data['Email'],
+            'degree': data['Role'],
+        })
+
+    (new, existing) = save_students(db, students)
+    print('%d existing students, %d new:' % (len(existing), len(new)))
+
+    for s in new:
+        print('%12s %9s %-24s' % (s.username, s.student_id, s.name()))
+
+
 def save_students(db, students):
     (new_students, existing_students) = ([], [])
 
@@ -48,8 +90,12 @@ def save_students(db, students):
         s = db.Student(student_id=sd['id']) if new_student else existing.get()
 
         s.username = username
-        (s.surname, s.forename) = sd['name'].split(', ')
         s.graduate_student = sd['degree'].startswith('Graduate')
+
+        if ', ' in sd['name']:
+            (s.surname, s.forename) = sd['name'].split(', ')
+        else:
+            (s.surname, s.forename) = sd['name'].rsplit(' ', 1)
 
         if s.forename.endswith('.'):
             forenames = s.forename.split()
@@ -65,14 +111,14 @@ def save_students(db, students):
     return (new_students, existing_students)
 
 
-def parse(soup):
+def parse_banner(soup):
     """
     Parse the HTML output of Banner's "Summary Class List", returning
     a tuple with a dictionary of class information (class name, etc.)
     and a list of student dictionaries.
 
     Example usage:
-    (course_info, students) = banner.classlist.parse_html(open(filename, 'r'))
+    (course_info, students) = classlist.parse_banner(open(filename, 'r'))
 
     print('%s (CRN %d)' % (course_info['name'], course_info['crn']))
     print(course_info['duration'])
