@@ -12,10 +12,12 @@ import click
               help='Username of instructor sending mail')
 @click.option('--encoding', help='Text encoding ("ascii" or "utf-8")',
               metavar='ENC', default='utf-8', show_default=True)
-@click.option('--smtp', help='SMTP server', metavar='HOSTNAME',
-              default='smtp.mun.ca', show_default=True)
+@click.option('--hostname', help='SMTP server', default='smtp.mun.ca',
+              show_default=True)
+@click.option('--port', help='SMTP port', type=int, default=25,
+              show_default=True)
 @click.pass_obj
-def cli(db, subject, to, to_all, filter, sender, encoding, smtp, test, file):
+def cli(db, to, to_all, filter, sender, file, **kwargs):
     """Send email to the class or individual students."""
 
     import jinja2
@@ -56,13 +58,14 @@ def cli(db, subject, to, to_all, filter, sender, encoding, smtp, test, file):
         sys.exit(1)
 
     template = jinja2.Template(file.read())
-    send_mail(sender, recipients, subject, template, encoding, test, smtp)
+    send_mail(sender, recipients, template, **kwargs)
 
 
 class SMTPSender:
-    def __init__(self, server):
+    def __init__(self, server, port):
         import smtplib
-        self.smtp = smtplib.SMTP(server)
+        self.smtp = smtplib.SMTP()
+        self.smtp.connect(server, port)
 
     def done(self):
         return self.smtp.quit()
@@ -82,10 +85,11 @@ class TestSender:
         print('---\n')
 
 
-def send_mail(sender, recipients, subject, template, encoding, test, smtp):
+def send_mail(sender, recipients, template, subject, encoding, test,
+              hostname, port):
     import email.mime.text
 
-    send = TestSender() if test else SMTPSender(smtp)
+    send = TestSender() if test else SMTPSender(hostname, port)
 
     for student in recipients:
         content = template.render(student=student)
