@@ -67,7 +67,7 @@ def init(db, username, all_students, filter):
     htpasswd = passlib.apache.HtpasswdFile()
 
     for user in itertools.chain(instructors, students):
-        password = xkcd.generate_xkcdpassword(wordlist, words)
+        password = xkcd.generate_xkcdpassword(wordlist, length)
         htpasswd.set_password(user.username, password)
 
         filename = user.username + '.mail'
@@ -108,7 +108,7 @@ def reset(db, username):
     htpasswd = passlib.apache.HtpasswdFile()
 
     for user in users:
-        password = xkcd.generate_xkcdpassword(wordlist, words)
+        password = xkcd.generate_xkcdpassword(wordlist, length)
         htpasswd.set_password(user.username, password)
 
         print('%s: %s' % (user.username, password))
