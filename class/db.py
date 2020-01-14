@@ -62,6 +62,15 @@ class Student(Model):
     class Meta:
         database = db
 
+    @classmethod
+    def lookup(cls, identifier):
+        """Find a Student by integer student ID or by username."""
+
+        try:
+            return Student.get(student_id=int(identifier))
+        except:
+            return Student.get(username=identifier)
+
     def email(self):
         return '%s@mun.ca' % self.username
 

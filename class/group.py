@@ -2,13 +2,13 @@ import click
 
 
 @click.command('group',
-               help='Create lab groups from (comma-separated) usernames.')
-@click.argument('usernames')
+               help='Create lab groups from usernames.')
+@click.argument('usernames', nargs=-1, required=True)
 @click.option('-a', '--auto', is_flag=True,
               help='Auto-group all ungrouped students')
 @click.pass_obj
 def cli(db, usernames, auto):
-    students = [db.Student.get(username=u) for u in usernames.split(',')]
+    students = [db.Student.lookup(u) for u in usernames]
     if len(students) > 0:
         create_group(students, db)
 
