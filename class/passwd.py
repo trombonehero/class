@@ -81,7 +81,7 @@ Password:       {password}
 Lab group(s):   {', '.join([str(g.group_id) for g in user.groups])}
 ''')
 
-        if not save:
+        if save:
             user.pw_hash = htpasswd.get_hash(user.username)
             user.save()
 
