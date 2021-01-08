@@ -20,7 +20,7 @@ def banner(db, html):
 
     for html_file in html:
         soup = BeautifulSoup(html_file, "html.parser")
-        info, students = parse(soup)
+        info, students = parse_banner(soup)
 
         if not course_info:
             course_info = info
