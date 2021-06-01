@@ -52,7 +52,7 @@ six==1.15.0
     #   mechanicalsoup
 soupsieve==2.1
     # via beautifulsoup4
-urllib3==1.26.2
+urllib3==1.26.5
     # via
     #   -r requirements.in
     #   requests
